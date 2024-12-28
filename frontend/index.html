@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开源数据发展趋势仪表盘</title>
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="preload" href="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" as="style">
+    
+    <!-- CSS 引入 -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- 异步加载非关键 JS -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <!-- 使用 module 方式加载 JS -->
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/charts.js"></script>
+    <script type="module" src="js/radar.js"></script>
+</head>
+<body>
+    <!-- 背景动画容器 -->
+    <div id="particles-js"></div>
+
+    <!-- 主面板 -->
+    <div class="dashboard-container">
+        <!-- 顶部区域 -->
+        <header class="header">
+            <!-- 项目选择区域 -->
+            <div id="current-time" class="current-time"></div>
+            <div class="project-selector">
+                <select id="project-select" class="project-select">
+                    <option value="">选择项目...</option>
+                </select>
+                <button id="add-project" class="add-project-btn">
+                    <i class="fas fa-plus"></i>
+                    添加项目
+                </button>
+            </div>
+        </header>
+
+        <!-- 左侧面板 -->
+        <div class="left-panel">
+            <div class="card">
+                <div class="card-title">PR处理效率</div>
+                <div class="chart-container" id="pr-efficiency-chart"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">OpenRank</div>
+                <div class="chart-container" id="openrank-chart"></div>
+            </div>
+        </div>
+
+        <!-- 中间面板 -->
+        <div class="center-panel">
+            <div class="card">
+                <div class="metrics-container">
+                    <!-- 核心指标 -->
+                    <div class="core-metrics">
+                        <div class="metric-item">
+                            <div class="metric-value" id="openrank-avg">0.00</div>
+                            <div class="metric-label">OpenRank平均值</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="github-avg">0.00</div>
+                            <div class="metric-label">GitHub平均值</div>
+                        </div>
+                    </div>
+                    <!-- 雷达图 -->
+                    <div class="radar-container" style="height: 400px; width: 100%;">
+                        <div id="radar-chart" style="height: 100%; width: 100%;"></div>
+                        <div class="radar-circle"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="chart-container" id="github-table"></div>
+            </div>
+        </div>
+
+        <!-- 右侧面板 -->
+        <div class="right-panel">
+            <div class="card">
+                <div class="card-title">关注度</div>
+                <div class="chart-container" id="attention-chart"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">开发者活跃度</div>
+                <div class="chart-container" id="developer-activity-chart"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">项目活跃度</div>
+                <div class="chart-container" id="project-activity-chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部区域 -->
+    <footer class="footer">
+        <span>© 2024 开源数据分析平台</span>
+    </footer>
+</body>
+</html>
