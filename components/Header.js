@@ -24,6 +24,7 @@ const Header = ({ onAddProject }) => {
         const response = await fetch('/api/projects');
         if (!response.ok) throw new Error('Failed to fetch projects');
         const data = await response.json();
+        console.log('Fetched projects:', data.projects); // 添加日志
         setProjects(data.projects);
       } catch (error) {
         console.error('Error fetching projects:', error);

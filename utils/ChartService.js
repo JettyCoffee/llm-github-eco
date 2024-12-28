@@ -52,12 +52,21 @@ export const ChartService = {
       '活跃度'
     );
 
+    // 生成 问题解决时间 图表配置
+    const issueResolutionDurationOptions = generateLineChartOptions(
+      projectsData,
+      'issue_resolution_duration',
+      '问题解决时间',
+      '时间 (小时)' // 根据数据单位调整
+    );
+
     return {
       prEfficiencyOptions,
       openRankOptions,
       attentionOptions,
       developerActivityOptions,
       projectActivityOptions,
+      issueResolutionDurationOptions, // 添加新的图表配置
     };
   },
 };
@@ -72,12 +81,18 @@ export const ChartService = {
  */
 const generateLineChartOptions = (projectsData, dataType, title, yAxisName) => {
   const categories = getCommonCategories(projectsData, dataType);
+  console.log(`Generating Line Chart for ${title}, Categories:`, categories); // 添加日志
   const series = Object.keys(projectsData).map((project) => ({
     name: project,
     type: 'line',
     data: extractSeriesData(projectsData[project][dataType], categories),
     smooth: true,
+    emphasis: {
+      focus: 'series'
+    }
   }));
+
+  console.log(`Line Chart Series:`, series); // 添加日志
 
   return {
     title: {
@@ -89,6 +104,9 @@ const generateLineChartOptions = (projectsData, dataType, title, yAxisName) => {
     },
     tooltip: {
       trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+      },
     },
     legend: {
       data: Object.keys(projectsData),
@@ -148,11 +166,17 @@ const generateLineChartOptions = (projectsData, dataType, title, yAxisName) => {
  */
 const generateBarChartOptions = (projectsData, dataType, title, yAxisName) => {
   const categories = getCommonCategories(projectsData, dataType);
+  console.log(`Generating Bar Chart for ${title}, Categories:`, categories); // 添加日志
   const series = Object.keys(projectsData).map((project) => ({
     name: project,
     type: 'bar',
     data: extractSeriesData(projectsData[project][dataType], categories),
+    emphasis: {
+      focus: 'series'
+    }
   }));
+
+  console.log(`Bar Chart Series:`, series); // 添加日志
 
   return {
     title: {
@@ -164,6 +188,9 @@ const generateBarChartOptions = (projectsData, dataType, title, yAxisName) => {
     },
     tooltip: {
       trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
     },
     legend: {
       data: Object.keys(projectsData),
