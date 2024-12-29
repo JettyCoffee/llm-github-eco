@@ -7,14 +7,14 @@ const theme = createTheme({
             main: '#1a73e8', // Google 蓝色
         },
         secondary: {
-            main: '#34a853', // Google 绿色
+            main: '#8e24aa', // 紫色
         },
         background: {
             default: '#ffffff', // 白色背景
         },
     },
     typography: {
-        fontFamily: 'Roboto, Arial, sans-serif',
+        fontFamily: 'HarmonyOS Sans SC, Roboto, Arial, sans-serif',
     },
 });
 

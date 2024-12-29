@@ -1,11 +1,8 @@
 // components/Dashboard.js
 import React, { useState, useEffect, useContext } from 'react';
 import { ProjectContext } from '../contexts/ProjectContext';
-import Header from './Header';
 import Footer from './Footer';
 import ChartCard from './ChartCard';
-import Metrics from './Metrics';
-import GithubTable from './GithubTable';
 import { ChartService } from '../utils/ChartService';
 import {
     Container,
@@ -106,8 +103,6 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-container">
-            <Header />
-
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 {/* 项目信息栏 */}
                 <Paper elevation={3} sx={{ p: 2, mb: 4 }}>
@@ -117,50 +112,51 @@ const Dashboard = () => {
                     {selectedProjects.map((project) => (
                         <Box key={project} mb={2}>
                             <Typography variant="h6">{project.split('/').pop()}</Typography>
-                            {/* 这里可以添加更多项目信息，如描述、创建日期等 */}
+                            {/* 可以在此处添加更多项目信息，如描述、创建日期等 */}
                         </Box>
                     ))}
                 </Paper>
 
                 {/* 图表区域 */}
                 <Grid container spacing={3}>
-                    {/* 示例图表：PR 处理效率 */}
+                    {/* PR 处理效率图表 */}
                     <Grid item xs={12} md={6}>
                         <ChartCard title="PR 处理效率" chartId="pr-efficiency-chart" chartOptions={chartOptions.prEfficiencyOptions} />
                     </Grid>
 
-                    {/* 示例图表：OpenRank */}
+                    {/* OpenRank 图表 */}
                     <Grid item xs={12} md={6}>
                         <ChartCard title="OpenRank" chartId="openrank-chart" chartOptions={chartOptions.openRankOptions} />
                     </Grid>
 
-                    {/* 示例图表：Issue 维度 */}
+                    {/* Issue 维度图表 */}
                     <Grid item xs={12} md={6}>
                         <ChartCard title="Issue 维度" chartId="issue-dimensions-chart" chartOptions={chartOptions.issueDimensionsOptions} />
                     </Grid>
 
-                    {/* 示例图表：代码变更行数 */}
+                    {/* 代码变更行数图表 */}
                     <Grid item xs={12} md={6}>
                         <ChartCard title="代码变更行数" chartId="code-change-chart" chartOptions={chartOptions.codeChangeOptions} />
                     </Grid>
 
-                    {/* 示例图表：关注度 */}
+                    {/* 关注度图表 */}
                     <Grid item xs={12} md={6}>
                         <ChartCard title="关注度" chartId="attention-chart" chartOptions={chartOptions.attentionOptions} />
                     </Grid>
 
-                    {/* 示例图表：雷达图 */}
+                    {/* 雷达图 */}
                     <Grid item xs={12} md={6}>
                         <ChartCard title="雷达图" chartId="radar-chart" chartOptions={chartOptions.radarOptions} />
                     </Grid>
 
-                    {/* 示例图表：数据栏 */}
+                    {/* 数据栏图表 */}
                     <Grid item xs={12} md={6}>
                         <ChartCard title="数据栏" chartId="data-bars-chart" chartOptions={chartOptions.dataBarsOptions} />
                     </Grid>
                 </Grid>
             </Container>
 
+            {/* Footer */}
             <Footer />
 
             <style jsx global>{`
