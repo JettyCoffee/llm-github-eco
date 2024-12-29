@@ -1,43 +1,31 @@
 // components/ChartCard.js
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
+import { Paper, Typography } from '@mui/material';
 
 const ChartCard = ({ title, chartId, chartOptions }) => {
-  const chartRef = useRef(null);
-  const chartInstance = useRef(null);
+    const chartRef = useRef(null);
 
-  useEffect(() => {
-    if (chartRef.current && chartOptions) {
-      chartInstance.current = echarts.init(chartRef.current);
-      chartInstance.current.setOption(chartOptions);
+    useEffect(() => {
+        if (chartRef.current && chartOptions) {
+            const chart = echarts.init(chartRef.current);
+            chart.setOption(chartOptions);
 
-      const handleResize = () => {
-        if (chartInstance.current) {
-          chartInstance.current.resize();
+            // 清理函数
+            return () => {
+                chart.dispose();
+            };
         }
-      };
-      window.addEventListener('resize', handleResize);
+    }, [chartOptions]);
 
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        if (chartInstance.current) {
-          chartInstance.current.dispose();
-        }
-      };
-    }
-  }, [chartOptions]);
-
-  return (
-    <div className="card">
-      <div className="card-title">{title}</div>
-      <div
-        className="chart-container"
-        id={chartId}
-        ref={chartRef}
-        style={{ height: '100%', width: '100%' }}
-      ></div>
-    </div>
-  );
+    return (
+        <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+                {title}
+            </Typography>
+            <div id={chartId} ref={chartRef} style={{ width: '100%', height: '400px' }}></div>
+        </Paper>
+    );
 };
 
 export default ChartCard;

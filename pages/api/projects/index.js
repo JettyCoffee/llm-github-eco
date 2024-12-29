@@ -39,6 +39,7 @@ export default function handler(req, res) {
 
     const projects = getAllProjects(dataDir, dataDir);
     console.log('Found projects:', projects); // 添加日志
+
     res.status(200).json({ projects });
   } catch (error) {
     console.error('Error reading projects:', error);

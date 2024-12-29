@@ -1,136 +1,181 @@
 // components/Dashboard.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { ProjectContext } from '../contexts/ProjectContext';
 import Header from './Header';
 import Footer from './Footer';
 import ChartCard from './ChartCard';
 import Metrics from './Metrics';
 import GithubTable from './GithubTable';
 import { ChartService } from '../utils/ChartService';
-import { getDeepestProjects } from '../utils/helpers'; // 导入辅助函数
+import {
+    Container,
+    Grid,
+    Typography,
+    Paper,
+    Box,
+    CircularProgress
+} from '@mui/material';
 
 const Dashboard = () => {
-    const [addedProjects, setAddedProjects] = useState([]); // 用户添加的项目
-    const [projectsData, setProjectsData] = useState({}); // 各项目的数据
-    const [chartOptions, setChartOptions] = useState({}); // 各图表的配置
+    const { selectedProjects } = useContext(ProjectContext);
+    const [projectsData, setProjectsData] = useState({});
+    const [chartOptions, setChartOptions] = useState({});
+    const [loadingData, setLoadingData] = useState(true);
 
     /**
-     * 添加新项目
-     * @param {string} projectName - 项目路径
+     * 获取所有项目的数据
      */
-    const handleAddProject = async (projectName) => {
-        if (addedProjects.includes(projectName)) {
-            alert('该项目已添加');
-            return;
-        }
+    useEffect(() => {
+        const fetchAllProjectsData = async () => {
+            const dataTypes = [
+                'activity',
+                'openrank',
+                'stars',
+                'technical_fork',
+                'attention',
+                'bus_factor',
+                'new_contributors',
+                'issues_closed',
+                'issue_comments',
+                'issues_new',
+                'issue_response_time',
+                'issue_resolution_duration',
+                'change_requests_accepted',
+                'change_requests',
+                'change_requests_reviews',
+                'change_request_response_time',
+                'change_request_resolution_duration',
+                'code_change_lines_remove',
+                'code_change_lines_add'
+            ];
 
-        try {
-            // 获取该项目的数据
-            const projectData = await fetchProjectData(projectName);
-            if (projectData) {
-                setAddedProjects([...addedProjects, projectName]);
-                setProjectsData((prevData) => ({
-                    ...prevData,
-                    [projectName]: projectData,
-                }));
-            } else {
-                alert('未找到该项目的数据');
-            }
-        } catch (error) {
-            console.error('Error adding project:', error);
-            alert('添加项目时发生错误');
-        }
-    };
+            const allProjectsData = {};
 
-    /**
-     * 获取项目的数据
-     * @param {string} projectName - 项目路径
-     * @returns {Object|null} - 项目数据或 null
-     */
-    const fetchProjectData = async (projectName) => {
-        const dataTypes = [
-            'activity',
-            'openrank',
-            'stars',
-            'technical_fork',
-            'attention',
-            'bus_factor',
-            'new_contributors',
-            'issues_closed',
-            'issue_comments',
-            'issues_new',
-            'issue_response_time',
-            'issue_resolution_duration',
-            'change_requests_accepted',
-            'change_requests',
-            'change_requests_reviews',
-            'change_request_response_time',
-            'change_request_resolution_duration',
-            'code_change_lines_remove',
-            'code_change_lines_add'
-        ];
+            for (const projectName of selectedProjects) {
+                const projectData = {};
 
-        const projectData = {};
-
-        for (const dataType of dataTypes) {
-            try {
-                const response = await fetch(`/api/data/${encodeURIComponent(projectName)}/${dataType}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    projectData[dataType] = data;
-                    console.log(`Loaded ${dataType} data for ${projectName}:`, data);
-                } else {
-                    console.error(`Failed to load ${dataType} data for ${projectName}: ${response.status}`);
-                    projectData[dataType] = null;
+                for (const dataType of dataTypes) {
+                    try {
+                        const response = await fetch(`/api/data/${encodeURIComponent(projectName)}/${dataType}`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            projectData[dataType] = data;
+                            console.log(`Loaded ${dataType} data for ${projectName}:`, data);
+                        } else {
+                            console.error(`Failed to load ${dataType} data for ${projectName}: ${response.status}`);
+                            projectData[dataType] = null;
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${dataType} data for ${projectName}:`, error);
+                        projectData[dataType] = null;
+                    }
                 }
-            } catch (error) {
-                console.error(`Error loading ${dataType} data for ${projectName}:`, error);
-                projectData[dataType] = null;
-            }
-        }
 
-        return projectData;
-    };
+                allProjectsData[projectName] = projectData;
+            }
+
+            setProjectsData(allProjectsData);
+            setLoadingData(false);
+        };
+
+        if (selectedProjects.length > 0) {
+            fetchAllProjectsData();
+        }
+    }, [selectedProjects]);
 
     /**
      * 初始化图表
      */
     useEffect(() => {
-        if (addedProjects.length > 0 && Object.keys(projectsData).length > 0) {
+        if (selectedProjects.length > 0 && Object.keys(projectsData).length > 0) {
             // 初始化图表配置
-            ChartService.initCharts(addedProjects, projectsData);
+            ChartService.initCharts(selectedProjects, projectsData);
             // 获取生成的图表配置
             const options = ChartService.getChartOptions();
             setChartOptions(options);
         }
-    }, [addedProjects, projectsData]);
+    }, [selectedProjects, projectsData]);
+
+    if (loadingData) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <div className="dashboard-container">
-            <Header onAddProject={handleAddProject} />
+            <Header />
 
-            {/* 左侧面板 */}
-            <div className="left-panel">
-                <ChartCard title="PR处理效率" chartId="pr-efficiency-chart" chartOptions={chartOptions.prEfficiencyOptions} />
-                <ChartCard title="OpenRank" chartId="openrank-chart" chartOptions={chartOptions.openRankOptions} />
-            </div>
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                {/* 项目信息栏 */}
+                <Paper elevation={3} sx={{ p: 2, mb: 4 }}>
+                    <Typography variant="h5" gutterBottom>
+                        项目信息
+                    </Typography>
+                    {selectedProjects.map((project) => (
+                        <Box key={project} mb={2}>
+                            <Typography variant="h6">{project.split('/').pop()}</Typography>
+                            {/* 这里可以添加更多项目信息，如描述、创建日期等 */}
+                        </Box>
+                    ))}
+                </Paper>
 
-            {/* 中间面板 */}
-            <div className="center-panel">
-                <div className="card">
-                    <Metrics projectsData={projectsData} />
-                </div>
-                <GithubTable projectsData={projectsData} />
-            </div>
+                {/* 图表区域 */}
+                <Grid container spacing={3}>
+                    {/* 示例图表：PR 处理效率 */}
+                    <Grid item xs={12} md={6}>
+                        <ChartCard title="PR 处理效率" chartId="pr-efficiency-chart" chartOptions={chartOptions.prEfficiencyOptions} />
+                    </Grid>
 
-            {/* 右侧面板 */}
-            <div className="right-panel">
-                <ChartCard title="关注度" chartId="attention-chart" chartOptions={chartOptions.attentionOptions} />
-                <ChartCard title="开发者活跃度" chartId="developer-activity-chart" chartOptions={chartOptions.developerActivityOptions} />
-                <ChartCard title="项目活跃度" chartId="project-activity-chart" chartOptions={chartOptions.projectActivityOptions} />
-                {/* 已删除问题解决时间图表 */}
-            </div>
+                    {/* 示例图表：OpenRank */}
+                    <Grid item xs={12} md={6}>
+                        <ChartCard title="OpenRank" chartId="openrank-chart" chartOptions={chartOptions.openRankOptions} />
+                    </Grid>
+
+                    {/* 示例图表：Issue 维度 */}
+                    <Grid item xs={12} md={6}>
+                        <ChartCard title="Issue 维度" chartId="issue-dimensions-chart" chartOptions={chartOptions.issueDimensionsOptions} />
+                    </Grid>
+
+                    {/* 示例图表：代码变更行数 */}
+                    <Grid item xs={12} md={6}>
+                        <ChartCard title="代码变更行数" chartId="code-change-chart" chartOptions={chartOptions.codeChangeOptions} />
+                    </Grid>
+
+                    {/* 示例图表：关注度 */}
+                    <Grid item xs={12} md={6}>
+                        <ChartCard title="关注度" chartId="attention-chart" chartOptions={chartOptions.attentionOptions} />
+                    </Grid>
+
+                    {/* 示例图表：雷达图 */}
+                    <Grid item xs={12} md={6}>
+                        <ChartCard title="雷达图" chartId="radar-chart" chartOptions={chartOptions.radarOptions} />
+                    </Grid>
+
+                    {/* 示例图表：数据栏 */}
+                    <Grid item xs={12} md={6}>
+                        <ChartCard title="数据栏" chartId="data-bars-chart" chartOptions={chartOptions.dataBarsOptions} />
+                    </Grid>
+                </Grid>
+            </Container>
 
             <Footer />
+
+            <style jsx global>{`
+                body {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                    background-color: #ffffff;
+                }
+                .dashboard-container {
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 100vh;
+                }
+            `}</style>
         </div>
     );
 };
