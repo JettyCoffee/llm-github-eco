@@ -12,6 +12,8 @@ import {
     Box,
     CircularProgress
 } from '@mui/material';
+import ProjectInfo from './ProjectInfo';
+import Header from './Header';
 
 const Dashboard = () => {
     const { selectedProjects } = useContext(ProjectContext);
@@ -122,78 +124,61 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-container">
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                {/* 项目信息栏 */}
-                <Paper 
-                    elevation={0} 
-                    sx={{ 
-                        p: 3, 
-                        mb: 4,
-                        borderRadius: 2,
-                        bgcolor: 'background.paper',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'
-                    }}
-                >
-                    <Typography 
-                        variant="h5" 
-                        gutterBottom
-                        sx={{
-                            fontWeight: 500,
-                            color: 'text.primary'
+            <Header />
+            <Box sx={{ mt: '64px' }}>
+                <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                    {/* 项目信息栏 */}
+                    <Paper 
+                        elevation={0} 
+                        sx={{ 
+                            p: 3, 
+                            mb: 4,
+                            borderRadius: 2,
+                            bgcolor: 'background.paper',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'
                         }}
                     >
-                        项目信息
-                    </Typography>
-                    {selectedProjects.map((project) => (
-                        <Box key={project} mb={2}>
-                            <Typography 
-                                variant="h6"
-                                sx={{
-                                    fontWeight: 400,
-                                    color: 'text.secondary'
-                                }}
-                            >
-                                {project.split('/').pop()}
-                            </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                            {selectedProjects.map((project) => (
+                                <ProjectInfo key={project} project={project} />
+                            ))}
                         </Box>
-                    ))}
-                </Paper>
+                    </Paper>
 
-                {/* 图表区域 */}
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                    {/* 项目关注度图表 */}
-                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
-                        <ChartCard chartId="project-attention-chart" chartOptions={chartOptions.projectAttentionOptions} />
+                    {/* 图表区域 */}
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                        {/* 项目关注度图表 */}
+                        <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                            <ChartCard chartId="project-attention-chart" chartOptions={chartOptions.projectAttentionOptions} />
+                        </Box>
+
+                        {/* OpenRank 图表 */}
+                        <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                            <ChartCard chartId="openrank-chart" chartOptions={chartOptions.openRankOptions} />
+                        </Box>
+
+                        {/* 代码变更行为图表 */}
+                        <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                            <ChartCard chartId="code-change-behavior-chart" chartOptions={chartOptions.codeChangeBehaviorOptions} />
+                        </Box>
+
+                        {/* PR 情况图表 */}
+                        <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                            <ChartCard chartId="pr-situation-chart" chartOptions={chartOptions.prSituationOptions} />
+                        </Box>
+
+                        {/* Issue 变化图表 */}
+                        <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                            <ChartCard chartId="issue-changes-chart" chartOptions={chartOptions.issueChangesOptions} />
+                        </Box>
+
+                        {/* 项目活跃度图表 */}
+                        <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                            <ChartCard chartId="project-activity-chart" chartOptions={chartOptions.projectActivityOptions} />
+                        </Box>
                     </Box>
-
-                    {/* OpenRank 图表 */}
-                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
-                        <ChartCard chartId="openrank-chart" chartOptions={chartOptions.openRankOptions} />
-                    </Box>
-
-                    {/* 代码变更行为图表 */}
-                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
-                        <ChartCard chartId="code-change-behavior-chart" chartOptions={chartOptions.codeChangeBehaviorOptions} />
-                    </Box>
-
-                    {/* PR 情况图表 */}
-                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
-                        <ChartCard chartId="pr-situation-chart" chartOptions={chartOptions.prSituationOptions} />
-                    </Box>
-
-                    {/* Issue 变化图表 */}
-                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
-                        <ChartCard chartId="issue-changes-chart" chartOptions={chartOptions.issueChangesOptions} />
-                    </Box>
-
-                    {/* 项目活跃度图表 */}
-                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
-                        <ChartCard chartId="project-activity-chart" chartOptions={chartOptions.projectActivityOptions} />
-                    </Box>
-                </Box>
-            </Container>
-
-            {/* Footer */}
+                </Container>
+            </Box>
             <Footer />
 
             <style jsx global>{`

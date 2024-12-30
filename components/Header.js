@@ -1,76 +1,209 @@
 // components/Header.js
 import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { AppBar, Toolbar, Button, Box, IconButton, Tooltip } from '@mui/material';
+import { 
+    AppBar, 
+    Toolbar, 
+    Box, 
+    IconButton, 
+    Container,
+    Typography,
+    Link
+} from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import GradientTypography from './GradientTypography'; // 自定义组件，用于渐变文字
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 const Header = () => {
     return (
-        <AppBar position="static" color="default" elevation={1}>
-            <Toolbar>
-                {/* 左侧 Logo 和标题 */}
-                <Box display="flex" alignItems="center" flexGrow={1}>
-                    <Link href="/">
-                        <Image src="/logo.png" alt="Logo" width={40} height={40} />
-                    </Link>
-                    <GradientTypography variant="h6" sx={{ ml: 2 }}>
-                        LLM Ecosystem Visualization
-                    </GradientTypography>
-                </Box>
+        <AppBar 
+            position="fixed" 
+            color="inherit" 
+            elevation={0}
+            sx={{
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+            }}
+        >
+            <Container maxWidth="xl">
+                <Toolbar 
+                    disableGutters 
+                    sx={{ 
+                        minHeight: '56px',
+                        justifyContent: 'space-between'
+                    }}
+                >
+                    {/* 左侧 Logo 和品牌名 */}
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Link
+                            href="/"
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}
+                        >
+                            <GitHubIcon sx={{ fontSize: 28, mr: 1 }} />
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    fontSize: '1.125rem',
+                                    fontWeight: 500,
+                                    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent'
+                                }}
+                            >
+                                LLM Ecosystem Visualization
+                            </Typography>
+                        </Link>
+                    </Box>
 
-                {/* 中间导航选项 */}
-                <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexGrow: 2, justifyContent: 'center' }}>
-                    <Link href="/" passHref>
-                        <Button color="inherit">首页</Button>
-                    </Link>
-                    <Link href="/rankings" passHref>
-                        <Button color="inherit">排行榜</Button>
-                    </Link>
-                    <Link href="https://huggingface.co" passHref>
-                        <Button color="inherit" target="_blank" rel="noopener noreferrer">HuggingFace</Button>
-                    </Link>
-                </Box>
+                    {/* 中间导航菜单 */}
+                    <Box 
+                        sx={{ 
+                            display: 'flex', 
+                            gap: 4,
+                            position: 'absolute',
+                            left: '50%',
+                            transform: 'translateX(-50%)'
+                        }}
+                    >
+                        <Link
+                            href="/"
+                            sx={{
+                                textDecoration: 'none',
+                                color: 'text.primary',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                py: 1,
+                                px: 2,
+                                borderRadius: 1,
+                                transition: 'all 0.2s',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                    transform: 'translateY(-2px)',
+                                }
+                            }}
+                        >
+                            首页
+                        </Link>
+                        <Link
+                            href="/rankings"
+                            sx={{
+                                textDecoration: 'none',
+                                color: 'text.primary',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                py: 1,
+                                px: 2,
+                                borderRadius: 1,
+                                transition: 'all 0.2s',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                    transform: 'translateY(-2px)',
+                                }
+                            }}
+                        >
+                            排行榜
+                        </Link>
+                        <Link
+                            href="https://huggingface.co"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                textDecoration: 'none',
+                                color: 'text.primary',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                py: 1,
+                                px: 2,
+                                borderRadius: 1,
+                                transition: 'all 0.2s',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                    transform: 'translateY(-2px)',
+                                }
+                            }}
+                        >
+                            HuggingFace
+                        </Link>
+                    </Box>
 
-                {/* 右侧小 Logo */}
-                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, justifyContent: 'flex-end' }}>
-                    {/* 收藏页面按钮（需要浏览器支持） */}
-                    <Tooltip title="收藏此页面">
-                        <IconButton
-                            color="inherit"
+                    {/* 右侧工具栏 */}
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                        <IconButton 
+                            size="small"
+                            sx={{
+                                color: 'text.primary',
+                                '&:hover': { color: 'primary.main' }
+                            }}
+                        >
+                            <DarkModeIcon sx={{ fontSize: 20 }} />
+                        </IconButton>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                cursor: 'pointer',
+                                color: 'text.primary',
+                                '&:hover': { color: 'primary.main' },
+                                transition: 'color 0.3s ease'
+                            }}
                             onClick={() => {
-                                if (window.sidebar && window.sidebar.addPanel) { // Firefox <=22
+                                if (window.sidebar && window.sidebar.addPanel) {
                                     window.sidebar.addPanel(document.title, window.location.href, '');
-                                } else if (window.external && ('AddFavorite' in window.external)) { // IE Favorites
+                                } else if (window.external && ('AddFavorite' in window.external)) {
                                     window.external.AddFavorite(location.href, document.title);
-                                } else if (window.opera && window.print) { // Opera <=12
-                                    this.title = document.title;
-                                    return true;
-                                } else { // Webkit - Chrome/Safari
+                                } else {
                                     alert('请使用 Ctrl+D (Cmd+D) 收藏此页面。');
                                 }
                             }}
                         >
-                            <FavoriteIcon />
-                        </IconButton>
-                    </Tooltip>
+                            <BookmarkBorderIcon sx={{ fontSize: 20 }} />
+                            <Typography 
+                                variant="body2"
+                                sx={{ 
+                                    fontWeight: 500,
+                                    display: { xs: 'none', sm: 'block' }
+                                }}
+                            >
+                                收藏
+                            </Typography>
+                        </Box>
 
-                    {/* GitHub 项目链接按钮 */}
-                    <Tooltip title="我的项目地址">
-                        <IconButton
-                            color="inherit"
+                        <Box
                             component="a"
                             href="https://github.com/zzsyppt/llm-eco-viz"
                             target="_blank"
                             rel="noopener noreferrer"
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                color: 'text.primary',
+                                textDecoration: 'none',
+                                '&:hover': { color: 'primary.main' },
+                                transition: 'color 0.3s ease'
+                            }}
                         >
-                            <GitHubIcon />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            </Toolbar>
+                            <GitHubIcon sx={{ fontSize: 20 }} />
+                            <Typography 
+                                variant="body2"
+                                sx={{ 
+                                    fontWeight: 500,
+                                    display: { xs: 'none', sm: 'block' }
+                                }}
+                            >
+                                我的项目
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Toolbar>
+            </Container>
         </AppBar>
     );
 };
