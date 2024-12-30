@@ -56,26 +56,40 @@ const Dashboard = () => {
                         const response = await fetch(`/api/data/${encodeURIComponent(projectName)}/${dataType}`);
                         if (response.ok) {
                             const data = await response.json();
-                            projectData[dataType] = data;
-                            console.log(`Loaded ${dataType} data for ${projectName}:`, data);
+                            // 将数据转换为时间序列格式
+                            const timeSeriesData = Object.entries(data)
+                                .filter(([key]) => {
+                                    // 只保留年月格式的数据 (YYYY-MM)
+                                    return /^\d{4}-\d{2}$/.test(key);
+                                })
+                                .map(([time, value]) => ({
+                                    time: time,
+                                    value: typeof value === 'number' ? value : parseFloat(value) || 0
+                                }))
+                                .sort((a, b) => a.time.localeCompare(b.time));
+
+                            projectData[dataType] = timeSeriesData;
+                            console.log(`Loaded ${dataType} data for ${projectName}:`, timeSeriesData);
                         } else {
                             console.error(`Failed to load ${dataType} data for ${projectName}: ${response.status}`);
-                            projectData[dataType] = null;
+                            projectData[dataType] = [];
                         }
                     } catch (error) {
                         console.error(`Error loading ${dataType} data for ${projectName}:`, error);
-                        projectData[dataType] = null;
+                        projectData[dataType] = [];
                     }
                 }
 
                 allProjectsData[projectName] = projectData;
             }
 
+            console.log('All projects data:', allProjectsData);
             setProjectsData(allProjectsData);
             setLoadingData(false);
         };
 
         if (selectedProjects.length > 0) {
+            setLoadingData(true);
             fetchAllProjectsData();
         }
     }, [selectedProjects]);
@@ -85,11 +99,16 @@ const Dashboard = () => {
      */
     useEffect(() => {
         if (selectedProjects.length > 0 && Object.keys(projectsData).length > 0) {
-            // 初始化图表配置
-            ChartService.initCharts(selectedProjects, projectsData);
-            // 获取生成的图表配置
-            const options = ChartService.getChartOptions();
-            setChartOptions(options);
+            try {
+                // 初始化图表配置
+                ChartService.initCharts(selectedProjects, projectsData);
+                // 获取生成的图表配置
+                const options = ChartService.getChartOptions();
+                console.log('Chart options:', options);
+                setChartOptions(options);
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
         }
     }, [selectedProjects, projectsData]);
 
@@ -105,55 +124,73 @@ const Dashboard = () => {
         <div className="dashboard-container">
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 {/* 项目信息栏 */}
-                <Paper elevation={3} sx={{ p: 2, mb: 4 }}>
-                    <Typography variant="h5" gutterBottom>
+                <Paper 
+                    elevation={0} 
+                    sx={{ 
+                        p: 3, 
+                        mb: 4,
+                        borderRadius: 2,
+                        bgcolor: 'background.paper',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'
+                    }}
+                >
+                    <Typography 
+                        variant="h5" 
+                        gutterBottom
+                        sx={{
+                            fontWeight: 500,
+                            color: 'text.primary'
+                        }}
+                    >
                         项目信息
                     </Typography>
                     {selectedProjects.map((project) => (
                         <Box key={project} mb={2}>
-                            <Typography variant="h6">{project.split('/').pop()}</Typography>
-                            {/* 可以在此处添加更多项目信息，如描述、创建日期等 */}
+                            <Typography 
+                                variant="h6"
+                                sx={{
+                                    fontWeight: 400,
+                                    color: 'text.secondary'
+                                }}
+                            >
+                                {project.split('/').pop()}
+                            </Typography>
                         </Box>
                     ))}
                 </Paper>
 
                 {/* 图表区域 */}
-                <Grid container spacing={3}>
-                    {/* PR 处理效率图表 */}
-                    <Grid item xs={12} md={6}>
-                        <ChartCard title="PR 处理效率" chartId="pr-efficiency-chart" chartOptions={chartOptions.prEfficiencyOptions} />
-                    </Grid>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                    {/* 项目关注度图表 */}
+                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                        <ChartCard chartId="project-attention-chart" chartOptions={chartOptions.projectAttentionOptions} />
+                    </Box>
 
                     {/* OpenRank 图表 */}
-                    <Grid item xs={12} md={6}>
-                        <ChartCard title="OpenRank" chartId="openrank-chart" chartOptions={chartOptions.openRankOptions} />
-                    </Grid>
+                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                        <ChartCard chartId="openrank-chart" chartOptions={chartOptions.openRankOptions} />
+                    </Box>
 
-                    {/* Issue 维度图表 */}
-                    <Grid item xs={12} md={6}>
-                        <ChartCard title="Issue 维度" chartId="issue-dimensions-chart" chartOptions={chartOptions.issueDimensionsOptions} />
-                    </Grid>
+                    {/* 代码变更行为图表 */}
+                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                        <ChartCard chartId="code-change-behavior-chart" chartOptions={chartOptions.codeChangeBehaviorOptions} />
+                    </Box>
 
-                    {/* 代码变更行数图表 */}
-                    <Grid item xs={12} md={6}>
-                        <ChartCard title="代码变更行数" chartId="code-change-chart" chartOptions={chartOptions.codeChangeOptions} />
-                    </Grid>
+                    {/* PR 情况图表 */}
+                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                        <ChartCard chartId="pr-situation-chart" chartOptions={chartOptions.prSituationOptions} />
+                    </Box>
 
-                    {/* 关注度图表 */}
-                    <Grid item xs={12} md={6}>
-                        <ChartCard title="关注度" chartId="attention-chart" chartOptions={chartOptions.attentionOptions} />
-                    </Grid>
+                    {/* Issue 变化图表 */}
+                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                        <ChartCard chartId="issue-changes-chart" chartOptions={chartOptions.issueChangesOptions} />
+                    </Box>
 
-                    {/* 雷达图 */}
-                    <Grid item xs={12} md={6}>
-                        <ChartCard title="雷达图" chartId="radar-chart" chartOptions={chartOptions.radarOptions} />
-                    </Grid>
-
-                    {/* 数据栏图表 */}
-                    <Grid item xs={12} md={6}>
-                        <ChartCard title="数据栏" chartId="data-bars-chart" chartOptions={chartOptions.dataBarsOptions} />
-                    </Grid>
-                </Grid>
+                    {/* 项目活跃度图表 */}
+                    <Box sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+                        <ChartCard chartId="project-activity-chart" chartOptions={chartOptions.projectActivityOptions} />
+                    </Box>
+                </Box>
             </Container>
 
             {/* Footer */}
