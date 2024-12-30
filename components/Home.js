@@ -211,7 +211,7 @@ const Home = () => {
                             <Box sx={{ position: 'relative', flex: 1 }}>
                                 <TextField
                                     fullWidth
-                                    placeholder="搜索并选择项目"
+                                    placeholder="搜索并选择项目（例如：tvm）"
                                     value={searchTerm}
                                     onChange={(e) => {
                                         setSearchTerm(e.target.value);
