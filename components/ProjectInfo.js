@@ -18,8 +18,6 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import GavelIcon from '@mui/icons-material/Gavel';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
-const GITHUB_TOKEN = "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";
-
 const ProjectInfo = ({ project }) => {
     const [repoInfo, setRepoInfo] = useState(null);
     const [hfInfo, setHfInfo] = useState(null);
@@ -31,7 +29,7 @@ const ProjectInfo = ({ project }) => {
                 // 获取 GitHub 仓库信息
                 const response = await fetch(`https://api.github.com/repos/${project}`, {
                     headers: {
-                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
                         'Accept': 'application/vnd.github.v3+json'
                     }
                 });
