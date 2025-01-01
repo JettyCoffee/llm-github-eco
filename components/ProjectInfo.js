@@ -360,16 +360,33 @@ const ProjectInfo = ({ project }) => {
 
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {repoInfo.topics.map((topic) => (
-                    <Chip
+                    <Link
                         key={topic}
-                        label={topic}
-                        size="small"
+                        href={`https://github.com/topics/${topic}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         sx={{
-                            bgcolor: 'rgba(25, 118, 210, 0.08)',
-                            color: 'primary.main',
-                            transition: 'background-color 0.3s'
+                            textDecoration: 'none',
+                            '&:hover': {
+                                textDecoration: 'none'
+                            }
                         }}
-                    />
+                    >
+                        <Chip
+                            label={topic}
+                            size="small"
+                            sx={{
+                                bgcolor: 'rgba(25, 118, 210, 0.08)',
+                                color: 'primary.main',
+                                transition: 'all 0.3s',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    bgcolor: 'rgba(25, 118, 210, 0.16)',
+                                    transform: 'translateY(-1px)'
+                                }
+                            }}
+                        />
+                    </Link>
                 ))}
             </Box>
         </Box>
