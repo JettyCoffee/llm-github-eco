@@ -6,7 +6,7 @@ export default function Rankings() {
 
     useEffect(() => {
         // TODO: 替换为实际的外部地址
-        window.location.href = 'https://example.com/rankings';
+        window.location.href = 'http://127.0.0.1:5000/leaderboard/';
     }, []);
 
     return (
