@@ -63,7 +63,8 @@ export class ChartService {
             return;
         }
 
-        console.log('Initializing all charts with data:', projectsData);
+        console.log('ChartService - Projects:', projects);
+        console.log('ChartService - Raw project data:', projectsData);
 
         try {
             this.initProjectAttentionChart(projects, projectsData);
@@ -122,8 +123,15 @@ export class ChartService {
      * @param {Object} data - 所有项目数据
      */
     static initProjectAttentionChart(projects, data) {
+        console.log('Initializing project attention chart');
+        console.log('Projects:', projects);
+        console.log('Data:', data);
+
         const chart = this.initializeChart('project-attention-chart');
-        if (!chart) return;
+        if (!chart) {
+            console.error('Failed to initialize chart container');
+            return;
+        }
 
         const metrics = [
             'stars',
@@ -472,12 +480,16 @@ export class ChartService {
             'change_requests_accepted',
             'change_requests',
             'change_requests_reviews',
+            'change_request_response_time',
+            'change_request_resolution_duration'
         ];
 
         const legendData = [
-            '代码变更接受量',
-            '代码变更总数',
-            '代码变更评审数',
+            'PR接受数',
+            'PR总数',
+            'PR评审数',
+            '响应时间',
+            '解决时长'
         ];
 
         const timeAxisSet = new Set();
@@ -530,17 +542,6 @@ export class ChartService {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'cross'
-                },
-                formatter: function(params) {
-                    let result = `${params[0].axisValue}<br/>`;
-                    params.forEach(param => {
-                        if (param.seriesName.includes('时间') || param.seriesName.includes('时长')) {
-                            result += `${param.seriesName}: ${param.value.toFixed(2)} 分钟<br/>`;
-                        } else {
-                            result += `${param.seriesName}: ${param.value.toFixed(0)}<br/>`;
-                        }
-                    });
-                    return result;
                 }
             },
             legend: {
@@ -605,7 +606,7 @@ export class ChartService {
             ],
             series: [
                 {
-                    name: 'PR接受数',
+                    name: legendData[0],
                     type: 'bar',
                     data: metricsData.change_requests_accepted,
                     stack: 'PR',
@@ -614,13 +615,10 @@ export class ChartService {
                             { offset: 0, color: 'rgba(126, 231, 135, 0.8)' },
                             { offset: 1, color: 'rgba(126, 231, 135, 0.3)' }
                         ])
-                    },
-                    emphasis: {
-                        focus: 'series'
                     }
                 },
                 {
-                    name: 'PR总数',
+                    name: legendData[1],
                     type: 'bar',
                     data: metricsData.change_requests,
                     stack: 'PR',
@@ -629,13 +627,10 @@ export class ChartService {
                             { offset: 0, color: 'rgba(121, 192, 255, 0.8)' },
                             { offset: 1, color: 'rgba(121, 192, 255, 0.3)' }
                         ])
-                    },
-                    emphasis: {
-                        focus: 'series'
                     }
                 },
                 {
-                    name: 'PR评审数',
+                    name: legendData[2],
                     type: 'bar',
                     data: metricsData.change_requests_reviews,
                     stack: 'PR',
@@ -644,13 +639,10 @@ export class ChartService {
                             { offset: 0, color: 'rgba(255, 123, 114, 0.8)' },
                             { offset: 1, color: 'rgba(255, 123, 114, 0.3)' }
                         ])
-                    },
-                    emphasis: {
-                        focus: 'series'
                     }
                 },
                 {
-                    name: '响应时间',
+                    name: legendData[3],
                     type: 'line',
                     yAxisIndex: 1,
                     data: metricsData.change_request_response_time,
@@ -661,7 +653,7 @@ export class ChartService {
                     itemStyle: { color: '#d2a8ff' }
                 },
                 {
-                    name: '解决时长',
+                    name: legendData[4],
                     type: 'line',
                     yAxisIndex: 1,
                     data: metricsData.change_request_resolution_duration,
@@ -671,10 +663,7 @@ export class ChartService {
                     lineStyle: { width: 3, color: '#ffa657' },
                     itemStyle: { color: '#ffa657' }
                 }
-            ],
-            animation: true,
-            animationDuration: 1000,
-            animationEasing: 'cubicInOut'
+            ]
         };
 
         chart.setOption(option);
@@ -822,12 +811,16 @@ export class ChartService {
             'issues_closed',
             'issue_comments',
             'issues_new',
+            'issue_response_time',
+            'issue_resolution_duration'
         ];
 
         const legendData = [
             '已关闭 Issue',
             'Issue 评论',
             '新建 Issue',
+            '响应时间',
+            '解决时长'
         ];
 
         const timeAxisSet = new Set();
@@ -837,7 +830,7 @@ export class ChartService {
             const projectData = data[project];
             if (projectData) {
                 metrics.forEach(metric => {
-                    if (projectData[metric]) {
+                    if (Array.isArray(projectData[metric])) {
                         projectData[metric].forEach(item => timeAxisSet.add(item.time));
                     }
                 });
@@ -858,7 +851,7 @@ export class ChartService {
             if (!projectData) return;
 
             metrics.forEach(metric => {
-                if (projectData[metric]) {
+                if (Array.isArray(projectData[metric])) {
                     projectData[metric].forEach(item => {
                         const timeIndex = timeAxis.indexOf(item.time);
                         if (timeIndex !== -1) {
@@ -880,17 +873,6 @@ export class ChartService {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'cross'
-                },
-                formatter: function(params) {
-                    let result = `${params[0].axisValue}<br/>`;
-                    params.forEach(param => {
-                        if (param.seriesName.includes('时间') || param.seriesName.includes('时长')) {
-                            result += `${param.seriesName}: ${param.value.toFixed(2)} 分钟<br/>`;
-                        } else {
-                            result += `${param.seriesName}: ${param.value.toFixed(0)}<br/>`;
-                        }
-                    });
-                    return result;
                 }
             },
             legend: {
@@ -955,37 +937,28 @@ export class ChartService {
             ],
             series: [
                 {
-                    name: '已关闭 Issue',
+                    name: legendData[0],
                     type: 'bar',
                     data: metricsData.issues_closed,
                     stack: 'Issue',
-                    itemStyle: { color: '#7ee787' },
-                    emphasis: {
-                        focus: 'series'
-                    }
+                    itemStyle: { color: '#7ee787' }
                 },
                 {
-                    name: 'Issue 评论',
+                    name: legendData[1],
                     type: 'bar',
                     data: metricsData.issue_comments,
                     stack: 'Issue',
-                    itemStyle: { color: '#79c0ff' },
-                    emphasis: {
-                        focus: 'series'
-                    }
+                    itemStyle: { color: '#79c0ff' }
                 },
                 {
-                    name: '新建 Issue',
+                    name: legendData[2],
                     type: 'bar',
                     data: metricsData.issues_new,
                     stack: 'Issue',
-                    itemStyle: { color: '#ff7b72' },
-                    emphasis: {
-                        focus: 'series'
-                    }
+                    itemStyle: { color: '#ff7b72' }
                 },
                 {
-                    name: '响应时间',
+                    name: legendData[3],
                     type: 'line',
                     yAxisIndex: 1,
                     data: metricsData.issue_response_time,
@@ -996,7 +969,7 @@ export class ChartService {
                     itemStyle: { color: '#d2a8ff' }
                 },
                 {
-                    name: '解决时长',
+                    name: legendData[4],
                     type: 'line',
                     yAxisIndex: 1,
                     data: metricsData.issue_resolution_duration,
@@ -1006,10 +979,7 @@ export class ChartService {
                     lineStyle: { width: 3, color: '#ffa657' },
                     itemStyle: { color: '#ffa657' }
                 }
-            ],
-            animation: true,
-            animationDuration: 1000,
-            animationEasing: 'cubicInOut'
+            ]
         };
 
         chart.setOption(option);

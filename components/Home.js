@@ -35,11 +35,10 @@ const Home = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const response = await fetch('/api/projects');
+                const response = await fetch('/api/projects/search?q=');
                 if (!response.ok) throw new Error('Failed to fetch projects');
                 const data = await response.json();
-                const deepestProjects = getDeepestProjects(data.projects);
-                setAvailableProjects(deepestProjects);
+                setAvailableProjects(data.map(project => project.full_name));
             } catch (error) {
                 console.error('Error fetching projects:', error);
             }
@@ -55,15 +54,23 @@ const Home = () => {
             setShowDropdown(false);
             setHighlightedIndex(-1);
         } else {
-            const lowerCaseTerm = debouncedSearchTerm.toLowerCase();
-            const filtered = availableProjects.filter(project =>
-                project.toLowerCase().includes(lowerCaseTerm)
-            );
-            setFilteredProjects(filtered);
-            setShowDropdown(filtered.length > 0);
-            setHighlightedIndex(-1);
+            const searchProjects = async () => {
+                try {
+                    const response = await fetch(`/api/projects/search?q=${encodeURIComponent(debouncedSearchTerm)}`);
+                    if (!response.ok) throw new Error('Failed to search projects');
+                    const data = await response.json();
+                    const projectNames = data.map(project => project.full_name);
+                    setFilteredProjects(projectNames);
+                    setShowDropdown(projectNames.length > 0);
+                    setHighlightedIndex(-1);
+                } catch (error) {
+                    console.error('Error searching projects:', error);
+                }
+            };
+
+            searchProjects();
         }
-    }, [debouncedSearchTerm, availableProjects]);
+    }, [debouncedSearchTerm]);
 
     // 处理点击外部关闭下拉菜单
     useEffect(() => {

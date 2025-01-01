@@ -18,7 +18,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import GavelIcon from '@mui/icons-material/Gavel';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
-const GITHUB_TOKEN = "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";
+const GITHUB_TOKEN = "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";
 
 const ProjectInfo = ({ project }) => {
     const [repoInfo, setRepoInfo] = useState(null);

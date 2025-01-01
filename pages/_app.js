@@ -17,5 +17,5 @@ function MyApp({ Component, pageProps }) {
         </ProjectProvider>
     );
 }
-
 export default MyApp;
+

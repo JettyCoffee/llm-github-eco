@@ -26,71 +26,49 @@ const Dashboard = () => {
      */
     useEffect(() => {
         const fetchAllProjectsData = async () => {
-            const dataTypes = [
-                'activity',
-                'openrank',
-                'stars',
-                'technical_fork',
-                'attention',
-                'bus_factor',
-                'new_contributors',
-                'issues_closed',
-                'issue_comments',
-                'issues_new',
-                'issue_response_time',
-                'issue_resolution_duration',
-                'change_requests_accepted',
-                'change_requests',
-                'change_requests_reviews',
-                'change_request_response_time',
-                'change_request_resolution_duration',
-                'code_change_lines_remove',
-                'code_change_lines_add'
-            ];
-
+            console.log('Starting to fetch data for projects:', selectedProjects);
             const allProjectsData = {};
 
             for (const projectName of selectedProjects) {
-                const projectData = {};
+                try {
+                    console.log(`Fetching data for ${projectName}...`);
+                    const response = await fetch(`/api/data/${encodeURIComponent(projectName)}/all`);
+                    console.log(`Response status for ${projectName}:`, response.status);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log(`Raw data for ${projectName}:`, data);
+                        
+                        // 将数据转换为时间序列格式
+                        const formattedData = {};
+                        Object.entries(data).forEach(([metricType, timeSeriesData]) => {
+                            formattedData[metricType] = timeSeriesData.map(({ time, value }) => ({
+                                time,
+                                value: typeof value === 'number' ? value : parseFloat(value) || 0
+                            })).sort((a, b) => a.time.localeCompare(b.time));
+                        });
 
-                for (const dataType of dataTypes) {
-                    try {
-                        const response = await fetch(`/api/data/${encodeURIComponent(projectName)}/${dataType}`);
-                        if (response.ok) {
-                            const data = await response.json();
-                            // 将数据转换为时间序列格式
-                            const timeSeriesData = Object.entries(data)
-                                .filter(([key]) => {
-                                    // 只保留年月格式的数据 (YYYY-MM)
-                                    return /^\d{4}-\d{2}$/.test(key);
-                                })
-                                .map(([time, value]) => ({
-                                    time: time,
-                                    value: typeof value === 'number' ? value : parseFloat(value) || 0
-                                }))
-                                .sort((a, b) => a.time.localeCompare(b.time));
-
-                            projectData[dataType] = timeSeriesData;
-                            console.log(`Loaded ${dataType} data for ${projectName}:`, timeSeriesData);
-                        } else {
-                            console.error(`Failed to load ${dataType} data for ${projectName}: ${response.status}`);
-                            projectData[dataType] = [];
-                        }
-                    } catch (error) {
-                        console.error(`Error loading ${dataType} data for ${projectName}:`, error);
-                        projectData[dataType] = [];
+                        allProjectsData[projectName] = formattedData;
+                        console.log(`Formatted data for ${projectName}:`, formattedData);
+                    } else {
+                        console.error(`Failed to load data for ${projectName}: ${response.status}`);
+                        const errorText = await response.text();
+                        console.error(`Error details for ${projectName}:`, errorText);
+                        allProjectsData[projectName] = {};
                     }
+                } catch (error) {
+                    console.error(`Error loading data for ${projectName}:`, error);
+                    allProjectsData[projectName] = {};
                 }
-
-                allProjectsData[projectName] = projectData;
             }
 
-            console.log('All projects data:', allProjectsData);
+            console.log('Final all projects data:', allProjectsData);
             setProjectsData(allProjectsData);
             setLoadingData(false);
         };
 
         if (selectedProjects.length > 0) {
+            console.log('Selected projects changed, fetching new data...');
             setLoadingData(true);
             fetchAllProjectsData();
         }
