@@ -17,8 +17,8 @@ import ProjectInfo from './ProjectInfo';
 import Header from './Header';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-// 计算可持续性评分
-const calculateSustainabilityScore = (projectsData) => {
+// 计算代码质量与可维护性评分
+const calculateCodeQualityScore = (projectsData) => {
     let totalScore = 0;
     let projectCount = 0;
 
@@ -28,31 +28,26 @@ const calculateSustainabilityScore = (projectsData) => {
         let score = 0;
         let metrics = 0;
 
-        // 1. 贡献者多样性 (bus_factor)
-        if (data.bus_factor?.length > 0) {
-            const latestBusFactor = data.bus_factor[data.bus_factor.length - 1].value;
-            score += Math.min(latestBusFactor * 20, 25); // 最高25分
+        // 1. PR 质量 (40分)
+        if (data.change_requests?.length > 0 && data.change_requests_accepted?.length > 0) {
+            const totalPRs = data.change_requests[data.change_requests.length - 1].value;
+            const acceptedPRs = data.change_requests_accepted[data.change_requests_accepted.length - 1].value;
+            const acceptRate = totalPRs > 0 ? (acceptedPRs / totalPRs) * 40 : 0;
+            score += acceptRate;
             metrics++;
         }
 
-        // 2. 新贡献者增长 (new_contributors)
-        if (data.new_contributors?.length > 0) {
-            const latestNewContributors = data.new_contributors[data.new_contributors.length - 1].value;
-            score += Math.min(latestNewContributors * 5, 25); // 最高25分
-            metrics++;
-        }
-
-        // 3. Issue 响应时间 (issue_response_time)
-        if (data.issue_response_time?.length > 0) {
-            const latestResponseTime = data.issue_response_time[data.issue_response_time.length - 1].value;
-            score += Math.max(0, 25 * (1 - latestResponseTime / (24 * 60))); // 最高25分，24小时内响应
-            metrics++;
-        }
-
-        // 4. PR 处理效率 (change_request_resolution_duration)
+        // 2. 代码审查效率 (30分)
         if (data.change_request_resolution_duration?.length > 0) {
-            const latestResolutionTime = data.change_request_resolution_duration[data.change_request_resolution_duration.length - 1].value;
-            score += Math.max(0, 25 * (1 - latestResolutionTime / (7 * 24 * 60))); // 最高25分，一周内处理
+            const resolutionTime = data.change_request_resolution_duration[data.change_request_resolution_duration.length - 1].value;
+            score += Math.max(0, 30 * (1 - resolutionTime / (7 * 24 * 60))); // 一周内处理完成
+            metrics++;
+        }
+
+        // 3. Issue 解决质量 (30分)
+        if (data.issue_resolution_duration?.length > 0) {
+            const resolutionTime = data.issue_resolution_duration[data.issue_resolution_duration.length - 1].value;
+            score += Math.max(0, 30 * (1 - resolutionTime / (14 * 24 * 60))); // 两周内解决
             metrics++;
         }
 
@@ -65,137 +60,116 @@ const calculateSustainabilityScore = (projectsData) => {
     return projectCount > 0 ? Math.round(totalScore / projectCount) : 0;
 };
 
-// 计算关注度趋势
-const calculateAttentionTrend = (projectsData) => {
-    let totalTrend = 0;
-    let projectCount = 0;
-
-    Object.values(projectsData).forEach(data => {
-        if (!data) return;
-
-        let trend = 0;
-        let metrics = 0;
-
-        // 1. Stars 增长趋势
-        if (data.stars?.length >= 2) {
-            const recentStars = data.stars.slice(-6);
-            const growthRate = (recentStars[recentStars.length - 1].value - recentStars[0].value) / recentStars[0].value;
-            trend += Math.min(growthRate * 100, 25);
-            metrics++;
-        }
-
-        // 2. 技术关注度趋势
-        if (data.attention?.length >= 2) {
-            const recentAttention = data.attention.slice(-6);
-            const growthRate = (recentAttention[recentAttention.length - 1].value - recentAttention[0].value) / recentAttention[0].value;
-            trend += Math.min(growthRate * 100, 25);
-            metrics++;
-        }
-
-        // 3. Issue 活跃度
-        if (data.issues_new?.length > 0 && data.issues_closed?.length > 0) {
-            const issueActivity = (data.issues_new[data.issues_new.length - 1].value + 
-                                 data.issues_closed[data.issues_closed.length - 1].value) / 2;
-            trend += Math.min(issueActivity * 5, 25);
-            metrics++;
-        }
-
-        // 4. PR 活跃度
-        if (data.change_requests?.length > 0) {
-            const prActivity = data.change_requests[data.change_requests.length - 1].value;
-            trend += Math.min(prActivity * 5, 25);
-            metrics++;
-        }
-
-        if (metrics > 0) {
-            totalTrend += (trend / metrics);
-            projectCount++;
-        }
-    });
-
-    return projectCount > 0 ? Math.round(totalTrend / projectCount) : 0;
-};
-
-// 计算发展度趋势
-const calculateDevelopmentTrend = (projectsData) => {
-    let totalTrend = 0;
-    let projectCount = 0;
-
-    Object.values(projectsData).forEach(data => {
-        if (!data) return;
-
-        let trend = 0;
-        let metrics = 0;
-
-        // 1. 代码变更量
-        if (data.code_change_lines_add?.length > 0 && data.code_change_lines_remove?.length > 0) {
-            const addLines = data.code_change_lines_add[data.code_change_lines_add.length - 1].value;
-            const removeLines = data.code_change_lines_remove[data.code_change_lines_remove.length - 1].value;
-            const codeActivity = (addLines + removeLines) / 2;
-            trend += Math.min(codeActivity / 1000, 25); // 每1000行代码变更满分
-            metrics++;
-        }
-
-        // 2. PR 接受率
-        if (data.change_requests?.length > 0 && data.change_requests_accepted?.length > 0) {
-            const totalPRs = data.change_requests[data.change_requests.length - 1].value;
-            const acceptedPRs = data.change_requests_accepted[data.change_requests_accepted.length - 1].value;
-            const acceptRate = totalPRs > 0 ? (acceptedPRs / totalPRs) * 25 : 0;
-            trend += acceptRate;
-            metrics++;
-        }
-
-        // 3. Issue 解决率
-        if (data.issues_new?.length > 0 && data.issues_closed?.length > 0) {
-            const newIssues = data.issues_new[data.issues_new.length - 1].value;
-            const closedIssues = data.issues_closed[data.issues_closed.length - 1].value;
-            const resolveRate = newIssues > 0 ? (closedIssues / newIssues) * 25 : 0;
-            trend += resolveRate;
-            metrics++;
-        }
-
-        // 4. 活跃度趋势
-        if (data.activity?.length >= 2) {
-            const recentActivity = data.activity.slice(-6);
-            const growthRate = (recentActivity[recentActivity.length - 1].value - recentActivity[0].value) / recentActivity[0].value;
-            trend += Math.min(growthRate * 100, 25);
-            metrics++;
-        }
-
-        if (metrics > 0) {
-            totalTrend += (trend / metrics);
-            projectCount++;
-        }
-    });
-
-    return projectCount > 0 ? Math.round(totalTrend / projectCount) : 0;
-};
-
-// 计算 OpenRank 综合评分
-const calculateOpenRankScore = (projectsData) => {
+// 计算社区活跃度评分
+const calculateCommunityScore = (projectsData) => {
     let totalScore = 0;
     let projectCount = 0;
 
     Object.values(projectsData).forEach(data => {
-        if (!data?.openrank?.length) return;
+        if (!data) return;
 
-        // 获取最近6个月的 OpenRank 数据
-        const recentOpenRank = data.openrank.slice(-6);
+        let score = 0;
+        let metrics = 0;
+
+        // 1. 贡献者多样性 (40分)
+        if (data.bus_factor?.length > 0) {
+            const busFactor = data.bus_factor[data.bus_factor.length - 1].value;
+            score += Math.min(busFactor * 8, 40); // 每0.125提升1分
+            metrics++;
+        }
+
+        // 2. 新贡献者增长 (30分)
+        if (data.new_contributors?.length > 0) {
+            const newContributors = data.new_contributors[data.new_contributors.length - 1].value;
+            score += Math.min(newContributors * 6, 30); // 每5位新贡献者得满分
+            metrics++;
+        }
+
+        // 3. 社区响应度 (30分)
+        if (data.issue_response_time?.length > 0) {
+            const responseTime = data.issue_response_time[data.issue_response_time.length - 1].value;
+            score += Math.max(0, 30 * (1 - responseTime / (24 * 60))); // 24小时内响应
+            metrics++;
+        }
+
+        if (metrics > 0) {
+            totalScore += (score / metrics);
+            projectCount++;
+        }
+    });
+
+    return projectCount > 0 ? Math.round(totalScore / projectCount) : 0;
+};
+
+// 计算项目影响力评分
+const calculateImpactScore = (projectsData) => {
+    let totalScore = 0;
+    let projectCount = 0;
+
+    Object.values(projectsData).forEach(data => {
+        if (!data) return;
+
+        let score = 0;
+        let metrics = 0;
+
+        // 1. Stars 增长 (40分)
+        if (data.stars?.length >= 2) {
+            const recentStars = data.stars.slice(-6);
+            const growthRate = (recentStars[recentStars.length - 1].value - recentStars[0].value) / recentStars[0].value;
+            score += Math.min(growthRate * 160, 40); // 25%增长率得满分
+            metrics++;
+        }
+
+        // 2. 技术影响力 (30分)
+        if (data.attention?.length >= 2) {
+            const recentAttention = data.attention.slice(-6);
+            const growthRate = (recentAttention[recentAttention.length - 1].value - recentAttention[0].value) / recentAttention[0].value;
+            score += Math.min(growthRate * 120, 30); // 25%增长率得满分
+            metrics++;
+        }
+
+        // 3. Fork 转化率 (30分)
+        if (data.technical_fork?.length > 0) {
+            const forkRate = data.technical_fork[data.technical_fork.length - 1].value;
+            score += Math.min(forkRate * 60, 30); // 每0.5%得1分
+            metrics++;
+        }
+
+        if (metrics > 0) {
+            totalScore += (score / metrics);
+            projectCount++;
+        }
+    });
+
+    return projectCount > 0 ? Math.round(totalScore / projectCount) : 0;
+};
+
+// 计算项目维护评分
+const calculateMaintenanceScore = (projectsData) => {
+    let totalScore = 0;
+    let projectCount = 0;
+
+    Object.values(projectsData).forEach(data => {
+        if (!data?.activity?.length) return;
+
+        // 获取最近6个月的活动数据
+        const recentActivity = data.activity.slice(-6);
         
-        // 1. 基础分数 (最新 OpenRank 值，最高40分)
-        const baseScore = Math.min(recentOpenRank[recentOpenRank.length - 1].value / 2.5, 40);
+        // 1. 维护频率 (40分)
+        const activityLevel = recentActivity[recentActivity.length - 1].value;
+        const frequencyScore = Math.min(activityLevel / 2.5, 40);
         
-        // 2. 增长趋势 (最高30分)
-        const growthRate = (recentOpenRank[recentOpenRank.length - 1].value - recentOpenRank[0].value) / recentOpenRank[0].value;
-        const trendScore = Math.min(growthRate * 100, 30);
-        
-        // 3. 稳定性 (波动率，最高30分)
-        const values = recentOpenRank.map(item => item.value);
+        // 2. 稳定性 (30分)
+        const values = recentActivity.map(item => item.value);
         const mean = values.reduce((a, b) => a + b, 0) / values.length;
         const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
         const stabilityScore = 30 * Math.exp(-variance / (mean * mean));
         
-        totalScore += baseScore + trendScore + stabilityScore;
+        // 3. 持续性 (30分)
+        const growthRate = (values[values.length - 1] - values[0]) / values[0];
+        const continuityScore = Math.min(growthRate * 120, 30);
+        
+        totalScore += frequencyScore + stabilityScore + continuityScore;
         projectCount++;
     });
 
@@ -223,28 +197,25 @@ const Dashboard = () => {
     const open = Boolean(anchorEl);
 
     const algorithmExplanations = {
-        sustainability: `可持续性评分算法：
-• 贡献者多样性 (25分)：基于 bus_factor，每增加0.05提升1分
-• 新贡献者增长 (25分)：每月新增5位贡献者可得满分
-• Issue响应时间 (25分)：24小时内响应可得满分
-• PR处理效率 (25分)：一周内处理完成可得满分`,
+        codeQuality: `代码质量与可维护性评分算法：
+• PR质量 (40分)：PR接受率，100%接受率得满分
+• 代码审查效率 (30分)：一周内完成审查得满分
+• Issue解决质量 (30分)：两周内解决问题得满分`,
 
-        attention: `关注度趋势算法：
-• Stars增长趋势 (25分)：6个月增长率超25%得满分
-• 技术关注度 (25分)：6个月增长率超25%得满分
-• Issue活跃度 (25分)：每月5个活跃Issue得满分
-• PR活跃度 (25分)：每月5个活跃PR得满分`,
+        community: `社区活跃度与贡献评分算法：
+• 贡献者多样性 (40分)：bus_factor每0.125提升1分
+• 新贡献者增长 (30分)：每月5位新贡献者得满分
+• 社区响应度 (30分)：24小时内响应得满分`,
 
-        development: `发展度趋势算法：
-• 代码变更量 (25分)：每月1000行代码变更得满分
-• PR接受率 (25分)：PR接受率达到100%得满分
-• Issue解决率 (25分)：Issue解决率达到100%得满分
-• 活跃度趋势 (25分)：6个月增长率超25%得满分`,
+        impact: `项目影响力与应用评分算法：
+• Stars增长 (40分)：6个月增长率25%得满分
+• 技术影响力 (30分)：6个月增长率25%得满分
+• Fork转化率 (30分)：每0.5%得1分，最高30分`,
 
-        openrank: `OpenRank综合评分算法：
-• 基础分数 (40分)：基于最新OpenRank值，每100分得16分
-• 增长趋势 (30分)：6个月增长率超30%得满分
-• 稳定性 (30分)：基于标准差计算波动率，波动越小分数越高`
+        maintenance: `项目维护与更新评分算法：
+• 维护频率 (40分)：基于活动水平，每2.5得1分
+• 稳定性 (30分)：基于活动波动率，越稳定分数越高
+• 持续性 (30分)：6个月增长率25%得满分`
     };
 
     /**
@@ -379,11 +350,11 @@ const Dashboard = () => {
                                     boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'
                                 }
                             }}
-                            onClick={(e) => handlePopoverOpen(e, algorithmExplanations.sustainability)}
+                            onClick={(e) => handlePopoverOpen(e, algorithmExplanations.codeQuality)}
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <Typography variant="subtitle2" color="text.secondary">
-                                    可持续性评分
+                                    代码质量与可维护性
                                 </Typography>
                                 <InfoOutlinedIcon 
                                     sx={{ 
@@ -395,7 +366,7 @@ const Dashboard = () => {
                                 />
                             </Box>
                             <Typography variant="h4" sx={{ color: 'success.main', fontWeight: 500 }}>
-                                {calculateSustainabilityScore(projectsData)}/100
+                                {calculateCodeQualityScore(projectsData)}/100
                             </Typography>
                         </Paper>
 
@@ -413,11 +384,11 @@ const Dashboard = () => {
                                     boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'
                                 }
                             }}
-                            onClick={(e) => handlePopoverOpen(e, algorithmExplanations.attention)}
+                            onClick={(e) => handlePopoverOpen(e, algorithmExplanations.community)}
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <Typography variant="subtitle2" color="text.secondary">
-                                    关注度趋势
+                                    社区活跃度与贡献
                                 </Typography>
                                 <InfoOutlinedIcon 
                                     sx={{ 
@@ -429,7 +400,7 @@ const Dashboard = () => {
                                 />
                             </Box>
                             <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 500 }}>
-                                {calculateAttentionTrend(projectsData)}/100
+                                {calculateCommunityScore(projectsData)}/100
                             </Typography>
                         </Paper>
 
@@ -447,11 +418,11 @@ const Dashboard = () => {
                                     boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'
                                 }
                             }}
-                            onClick={(e) => handlePopoverOpen(e, algorithmExplanations.development)}
+                            onClick={(e) => handlePopoverOpen(e, algorithmExplanations.impact)}
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <Typography variant="subtitle2" color="text.secondary">
-                                    发展度趋势
+                                    项目影响力与应用
                                 </Typography>
                                 <InfoOutlinedIcon 
                                     sx={{ 
@@ -463,7 +434,7 @@ const Dashboard = () => {
                                 />
                             </Box>
                             <Typography variant="h4" sx={{ color: 'warning.main', fontWeight: 500 }}>
-                                {calculateDevelopmentTrend(projectsData)}/100
+                                {calculateImpactScore(projectsData)}/100
                             </Typography>
                         </Paper>
 
@@ -481,11 +452,11 @@ const Dashboard = () => {
                                     boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)'
                                 }
                             }}
-                            onClick={(e) => handlePopoverOpen(e, algorithmExplanations.openrank)}
+                            onClick={(e) => handlePopoverOpen(e, algorithmExplanations.maintenance)}
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <Typography variant="subtitle2" color="text.secondary">
-                                    OpenRank 综合评分
+                                    项目维护与更新
                                 </Typography>
                                 <InfoOutlinedIcon 
                                     sx={{ 
@@ -497,7 +468,7 @@ const Dashboard = () => {
                                 />
                             </Box>
                             <Typography variant="h4" sx={{ color: 'info.main', fontWeight: 500 }}>
-                                {calculateOpenRankScore(projectsData)}/100
+                                {calculateMaintenanceScore(projectsData)}/100
                             </Typography>
                         </Paper>
                     </Box>
