@@ -28,31 +28,71 @@ const calculateCodeQualityScore = (projectsData) => {
         let score = 0;
         let metrics = 0;
 
-        // 1. PR 质量 (40分)
-        if (data.change_requests?.length > 0 && data.change_requests_accepted?.length > 0) {
-            const totalPRs = data.change_requests[data.change_requests.length - 1].value;
-            const acceptedPRs = data.change_requests_accepted[data.change_requests_accepted.length - 1].value;
-            const acceptRate = totalPRs > 0 ? (acceptedPRs / totalPRs) * 40 : 0;
-            score += acceptRate;
+        // 1. PR 质量趋势 (40分)
+        if (data.change_requests?.length >= 2 && data.change_requests_accepted?.length >= 2) {
+            const recentPRs = data.change_requests.slice(-6);
+            const recentAccepted = data.change_requests_accepted.slice(-6);
+            
+            // 计算接受率趋势
+            const startRate = recentAccepted[0].value / recentPRs[0].value;
+            const endRate = recentAccepted[recentAccepted.length - 1].value / recentPRs[recentPRs.length - 1].value;
+            const rateChange = endRate - startRate;
+            
+            // 趋势得分：接受率提升得高分
+            const trendScore = Math.min(Math.max(rateChange * 100, 0), 20);
+            // 当前水平得分：当前接受率越高得分越高
+            const levelScore = Math.min(endRate * 20, 20);
+            
+            score += trendScore + levelScore;
             metrics++;
         }
 
-        // 2. 代码审查效率 (30分)
-        if (data.change_request_resolution_duration?.length > 0) {
-            const resolutionTime = data.change_request_resolution_duration[data.change_request_resolution_duration.length - 1].value;
-            score += Math.max(0, 30 * (1 - resolutionTime / (7 * 24 * 60))); // 一周内处理完成
+        // 2. 代码审查效率趋势 (30分)
+        if (data.change_request_resolution_duration?.length >= 2) {
+            const recentDurations = data.change_request_resolution_duration.slice(-6);
+            const values = recentDurations.map(item => item.value);
+            
+            // 计算处理时间趋势（是否在改善）
+            const trendImprovement = values.slice(1).reduce((acc, curr, idx) => {
+                return acc + (values[idx] - curr) / values[idx];
+            }, 0) / (values.length - 1);
+            
+            // 计算平均处理时间（小时）
+            const avgDuration = values.reduce((a, b) => a + b, 0) / values.length / 60;
+            
+            // 趋势得分：改善趋势得高分
+            const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
+            // 速度得分：处理时间越短得分越高
+            const speedScore = Math.min(Math.max(15 * (1 - avgDuration / (7 * 24)), 0), 15);
+            
+            score += trendScore + speedScore;
             metrics++;
         }
 
-        // 3. Issue 解决质量 (30分)
-        if (data.issue_resolution_duration?.length > 0) {
-            const resolutionTime = data.issue_resolution_duration[data.issue_resolution_duration.length - 1].value;
-            score += Math.max(0, 30 * (1 - resolutionTime / (14 * 24 * 60))); // 两周内解决
+        // 3. Issue 解决质量趋势 (30分)
+        if (data.issue_resolution_duration?.length >= 2) {
+            const recentDurations = data.issue_resolution_duration.slice(-6);
+            const values = recentDurations.map(item => item.value);
+            
+            // 计算解决时间趋势
+            const trendImprovement = values.slice(1).reduce((acc, curr, idx) => {
+                return acc + (values[idx] - curr) / values[idx];
+            }, 0) / (values.length - 1);
+            
+            // 计算平均解决时间（小时）
+            const avgDuration = values.reduce((a, b) => a + b, 0) / values.length / 60;
+            
+            // 趋势得分：改善趋势得高分
+            const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
+            // 速度得分：解决时间越短得分越高
+            const speedScore = Math.min(Math.max(15 * (1 - avgDuration / (14 * 24)), 0), 15);
+            
+            score += trendScore + speedScore;
             metrics++;
         }
 
         if (metrics > 0) {
-            totalScore += (score / metrics);
+            totalScore += score;
             projectCount++;
         }
     });
@@ -71,29 +111,68 @@ const calculateCommunityScore = (projectsData) => {
         let score = 0;
         let metrics = 0;
 
-        // 1. 贡献者多样性 (40分)
-        if (data.bus_factor?.length > 0) {
-            const busFactor = data.bus_factor[data.bus_factor.length - 1].value;
-            score += Math.min(busFactor * 8, 40); // 每0.125提升1分
+        // 1. 贡献者多样性趋势 (40分)
+        if (data.bus_factor?.length >= 2) {
+            const recentBusFactor = data.bus_factor.slice(-6);
+            const startValue = recentBusFactor[0].value;
+            const endValue = recentBusFactor[recentBusFactor.length - 1].value;
+            const growthRate = (endValue - startValue) / startValue;
+            
+            // 计算趋势得分：增长率为正得高分，下降得低分
+            const trendScore = Math.min(Math.max(growthRate * 100, -20), 20); // 增长率转换为-20到20的分数
+            // 当前水平得分：当前值越高得分越高
+            const levelScore = Math.min(endValue * 4, 20); // 当前水平最高20分
+            
+            score += trendScore + levelScore;
             metrics++;
         }
 
-        // 2. 新贡献者增长 (30分)
-        if (data.new_contributors?.length > 0) {
-            const newContributors = data.new_contributors[data.new_contributors.length - 1].value;
-            score += Math.min(newContributors * 6, 30); // 每5位新贡献者得满分
+        // 2. 新贡献者增长趋势 (30分)
+        if (data.new_contributors?.length >= 2) {
+            const recentContributors = data.new_contributors.slice(-6);
+            const values = recentContributors.map(item => item.value);
+            
+            // 计算增长趋势
+            const growthTrend = values.slice(1).reduce((acc, curr, idx) => {
+                return acc + (curr - values[idx]) / values[idx];
+            }, 0) / (values.length - 1);
+            
+            // 计算平均贡献者数量
+            const avgContributors = values.reduce((a, b) => a + b, 0) / values.length;
+            
+            // 趋势得分：正增长得高分
+            const trendScore = Math.min(Math.max(growthTrend * 60, 0), 15);
+            // 规模得分：平均贡献者数量越多得分越高
+            const scaleScore = Math.min(avgContributors * 3, 15);
+            
+            score += trendScore + scaleScore;
             metrics++;
         }
 
-        // 3. 社区响应度 (30分)
-        if (data.issue_response_time?.length > 0) {
-            const responseTime = data.issue_response_time[data.issue_response_time.length - 1].value;
-            score += Math.max(0, 30 * (1 - responseTime / (24 * 60))); // 24小时内响应
+        // 3. 社区响应活跃度 (30分)
+        if (data.issue_response_time?.length >= 2) {
+            const recentResponseTime = data.issue_response_time.slice(-6);
+            const values = recentResponseTime.map(item => item.value);
+            
+            // 计算响应时间趋势（是否在改善）
+            const trendImprovement = values.slice(1).reduce((acc, curr, idx) => {
+                return acc + (values[idx] - curr) / values[idx]; // 响应时间减少是好事
+            }, 0) / (values.length - 1);
+            
+            // 计算平均响应时间（小时）
+            const avgResponseTime = values.reduce((a, b) => a + b, 0) / values.length / 60;
+            
+            // 趋势得分：改善趋势得高分
+            const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
+            // 响应速度得分：平均响应时间越短得分越高
+            const speedScore = Math.min(Math.max(15 * (1 - avgResponseTime / 72), 0), 15); // 3天内递减计分
+            
+            score += trendScore + speedScore;
             metrics++;
         }
 
         if (metrics > 0) {
-            totalScore += (score / metrics);
+            totalScore += score;
             projectCount++;
         }
     });
@@ -112,31 +191,69 @@ const calculateImpactScore = (projectsData) => {
         let score = 0;
         let metrics = 0;
 
-        // 1. Stars 增长 (40分)
+        // 1. Stars 增长趋势 (40分)
         if (data.stars?.length >= 2) {
             const recentStars = data.stars.slice(-6);
-            const growthRate = (recentStars[recentStars.length - 1].value - recentStars[0].value) / recentStars[0].value;
-            score += Math.min(growthRate * 160, 40); // 25%增长率得满分
+            const values = recentStars.map(item => item.value);
+            
+            // 计算增长趋势
+            const growthRate = (values[values.length - 1] - values[0]) / values[0];
+            // 计算月均增长率
+            const monthlyGrowth = values.slice(1).reduce((acc, curr, idx) => {
+                return acc + (curr - values[idx]) / values[idx];
+            }, 0) / (values.length - 1);
+            
+            // 趋势得分：持续增长得高分
+            const trendScore = Math.min(Math.max(monthlyGrowth * 120, 0), 20);
+            // 规模得分：总增长率越高得分越高
+            const scaleScore = Math.min(Math.max(growthRate * 80, 0), 20);
+            
+            score += trendScore + scaleScore;
             metrics++;
         }
 
-        // 2. 技术影响力 (30分)
+        // 2. 技术影响力趋势 (30分)
         if (data.attention?.length >= 2) {
             const recentAttention = data.attention.slice(-6);
-            const growthRate = (recentAttention[recentAttention.length - 1].value - recentAttention[0].value) / recentAttention[0].value;
-            score += Math.min(growthRate * 120, 30); // 25%增长率得满分
+            const values = recentAttention.map(item => item.value);
+            
+            // 计算增长趋势
+            const growthRate = (values[values.length - 1] - values[0]) / values[0];
+            // 计算月均增长率
+            const monthlyGrowth = values.slice(1).reduce((acc, curr, idx) => {
+                return acc + (curr - values[idx]) / values[idx];
+            }, 0) / (values.length - 1);
+            
+            // 趋势得分：持续增长得高分
+            const trendScore = Math.min(Math.max(monthlyGrowth * 90, 0), 15);
+            // 规模得分：总增长率越高得分越高
+            const scaleScore = Math.min(Math.max(growthRate * 60, 0), 15);
+            
+            score += trendScore + scaleScore;
             metrics++;
         }
 
-        // 3. Fork 转化率 (30分)
-        if (data.technical_fork?.length > 0) {
-            const forkRate = data.technical_fork[data.technical_fork.length - 1].value;
-            score += Math.min(forkRate * 60, 30); // 每0.5%得1分
+        // 3. Fork 应用趋势 (30分)
+        if (data.technical_fork?.length >= 2) {
+            const recentForks = data.technical_fork.slice(-6);
+            const values = recentForks.map(item => item.value);
+            
+            // 计算增长趋势
+            const growthRate = (values[values.length - 1] - values[0]) / values[0];
+            // 当前转化率
+            const currentRate = values[values.length - 1];
+            
+            // 趋势得分：增长趋势得高分
+            const trendScore = Math.min(Math.max(growthRate * 60, 0), 15);
+            // 当前水平得分：当前转化率越高得分越高
+            const levelScore = Math.min(currentRate * 30, 15);
+            
+            score += trendScore + levelScore;
             metrics++;
         }
 
         if (metrics > 0) {
-            totalScore += (score / metrics);
+            totalScore += score;
             projectCount++;
         }
     });
@@ -152,28 +269,323 @@ const calculateMaintenanceScore = (projectsData) => {
     Object.values(projectsData).forEach(data => {
         if (!data?.activity?.length) return;
 
-        // 获取最近6个月的活动数据
-        const recentActivity = data.activity.slice(-6);
-        
-        // 1. 维护频率 (40分)
-        const activityLevel = recentActivity[recentActivity.length - 1].value;
-        const frequencyScore = Math.min(activityLevel / 2.5, 40);
-        
-        // 2. 稳定性 (30分)
-        const values = recentActivity.map(item => item.value);
-        const mean = values.reduce((a, b) => a + b, 0) / values.length;
-        const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
-        const stabilityScore = 30 * Math.exp(-variance / (mean * mean));
-        
-        // 3. 持续性 (30分)
-        const growthRate = (values[values.length - 1] - values[0]) / values[0];
-        const continuityScore = Math.min(growthRate * 120, 30);
-        
-        totalScore += frequencyScore + stabilityScore + continuityScore;
-        projectCount++;
+        let score = 0;
+        let metrics = 0;
+
+        // 1. 维护频率趋势 (40分)
+        if (data.activity.length >= 2) {
+            const recentActivity = data.activity.slice(-6);
+            const values = recentActivity.map(item => item.value);
+            
+            // 计算活动趋势
+            const growthRate = (values[values.length - 1] - values[0]) / values[0];
+            // 当前活动水平
+            const currentLevel = values[values.length - 1];
+            
+            // 趋势得分：活动增长趋势得高分
+            const trendScore = Math.min(Math.max(growthRate * 80, 0), 20);
+            // 当前水平得分：当前活动水平越高得分越高
+            const levelScore = Math.min(currentLevel * 4, 20);
+            
+            score += trendScore + levelScore;
+            metrics++;
+        }
+
+        // 2. 维护稳定性 (30分)
+        if (data.activity.length >= 2) {
+            const recentActivity = data.activity.slice(-6);
+            const values = recentActivity.map(item => item.value);
+            
+            // 计算活动波动
+            const mean = values.reduce((a, b) => a + b, 0) / values.length;
+            const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
+            const cv = Math.sqrt(variance) / mean; // 变异系数
+            
+            // 波动趋势：计算波动是否在减小
+            const halfLength = Math.floor(values.length / 2);
+            const firstHalfVariance = values.slice(0, halfLength).reduce((a, b) => a + Math.pow(b - mean, 2), 0) / halfLength;
+            const secondHalfVariance = values.slice(halfLength).reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (values.length - halfLength);
+            const varianceImprovement = (firstHalfVariance - secondHalfVariance) / firstHalfVariance;
+            
+            // 趋势得分：波动减小趋势得高分
+            const trendScore = Math.min(Math.max(varianceImprovement * 60, 0), 15);
+            // 稳定性得分：变异系数越小得分越高
+            const stabilityScore = Math.min(Math.max(15 * (1 - cv), 0), 15);
+            
+            score += trendScore + stabilityScore;
+            metrics++;
+        }
+
+        // 3. 维护持续性 (30分)
+        if (data.activity.length >= 2) {
+            const recentActivity = data.activity.slice(-6);
+            const values = recentActivity.map(item => item.value);
+            
+            // 计算连续性
+            let gaps = 0;
+            for (let i = 1; i < values.length; i++) {
+                if (values[i] < values[i-1] * 0.5) gaps++; // 活动量降低超过50%算作gap
+            }
+            
+            // 计算活动量的整体趋势
+            const growthRate = (values[values.length - 1] - values[0]) / values[0];
+            
+            // 趋势得分：整体增长趋势得高分
+            const trendScore = Math.min(Math.max(growthRate * 60, 0), 15);
+            // 连续性得分：gap越少得分越高
+            const continuityScore = Math.min(Math.max(15 * (1 - gaps / values.length), 0), 15);
+            
+            score += trendScore + continuityScore;
+            metrics++;
+        }
+
+        if (metrics > 0) {
+            totalScore += score;
+            projectCount++;
+        }
     });
 
     return projectCount > 0 ? Math.round(totalScore / projectCount) : 0;
+};
+
+const getDetailedScoreExplanation = (type, projectsData) => {
+    // 检查数据是否存在
+    if (!projectsData || Object.keys(projectsData).length === 0) {
+        return '数据加载中...';
+    }
+
+    let explanation = '';
+    const data = Object.values(projectsData)[0]; // 获取第一个项目的数据
+    
+    // 检查数据是否有效
+    if (!data) {
+        return '暂无数据';
+    }
+
+    const totalScore = type === 'codeQuality' ? calculateCodeQualityScore(projectsData) :
+                      type === 'community' ? calculateCommunityScore(projectsData) :
+                      type === 'impact' ? calculateImpactScore(projectsData) :
+                      type === 'maintenance' ? calculateMaintenanceScore(projectsData) : 0;
+
+    switch (type) {
+        case 'codeQuality':
+            explanation = '代码质量与可维护性评分算法：\n\n';
+            
+            if (data.change_requests?.length >= 2 && data.change_requests_accepted?.length >= 2) {
+                const recentPRs = data.change_requests.slice(-6);
+                const recentAccepted = data.change_requests_accepted.slice(-6);
+                const startRate = recentAccepted[0].value / recentPRs[0].value;
+                const endRate = recentAccepted[recentAccepted.length - 1].value / recentPRs[recentPRs.length - 1].value;
+                const rateChange = endRate - startRate;
+                const trendScore = Math.min(Math.max(rateChange * 100, 0), 20);
+                const levelScore = Math.min(endRate * 20, 20);
+                
+                explanation += `• PR质量 (${Math.round(trendScore + levelScore)}/40分)：
+  - 当前接受率：${(endRate * 100).toFixed(1)}%
+  - 接受率变化：${(rateChange * 100).toFixed(1)}%
+  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 当前水平(${Math.round(levelScore)}分)\n\n`;
+            }
+            
+            if (data.change_request_resolution_duration?.length >= 2) {
+                const recentDurations = data.change_request_resolution_duration.slice(-6);
+                const values = recentDurations.map(item => item.value);
+                const trendImprovement = values.slice(1).reduce((acc, curr, idx) => {
+                    return acc + (values[idx] - curr) / values[idx];
+                }, 0) / (values.length - 1);
+                const avgDuration = values.reduce((a, b) => a + b, 0) / values.length / 60;
+                const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
+                const speedScore = Math.min(Math.max(15 * (1 - avgDuration / (7 * 24)), 0), 15);
+                
+                explanation += `• 代码审查效率 (${Math.round(trendScore + speedScore)}/30分)：
+  - 平均处理时间：${avgDuration.toFixed(1)}小时
+  - 处理速度改善：${(trendImprovement * 100).toFixed(1)}%
+  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 处理速度(${Math.round(speedScore)}分)\n\n`;
+            }
+            
+            if (data.issue_resolution_duration?.length >= 2) {
+                const recentDurations = data.issue_resolution_duration.slice(-6);
+                const values = recentDurations.map(item => item.value);
+                const trendImprovement = values.slice(1).reduce((acc, curr, idx) => {
+                    return acc + (values[idx] - curr) / values[idx];
+                }, 0) / (values.length - 1);
+                const avgDuration = values.reduce((a, b) => a + b, 0) / values.length / 60;
+                const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
+                const speedScore = Math.min(Math.max(15 * (1 - avgDuration / (14 * 24)), 0), 15);
+                
+                explanation += `• Issue解决质量 (${Math.round(trendScore + speedScore)}/30分)：
+  - 平均解决时间：${avgDuration.toFixed(1)}小时
+  - 解决速度改善：${(trendImprovement * 100).toFixed(1)}%
+  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 解决速度(${Math.round(speedScore)}分)\n\n`;
+            }
+            
+            explanation += `总分：${totalScore}/100`;
+            break;
+
+        case 'community':
+            explanation = '社区活跃度与贡献评分算法：\n\n';
+            
+            if (data.bus_factor?.length >= 2) {
+                const recentBusFactor = data.bus_factor.slice(-6);
+                const startValue = recentBusFactor[0].value;
+                const endValue = recentBusFactor[recentBusFactor.length - 1].value;
+                const growthRate = (endValue - startValue) / startValue;
+                const trendScore = Math.min(Math.max(growthRate * 100, -20), 20);
+                const levelScore = Math.min(endValue * 4, 20);
+                
+                explanation += `• 贡献者多样性 (${Math.round(trendScore + levelScore)}/40分)：
+  - 当前 Bus Factor：${endValue.toFixed(2)}
+  - 6个月增长率：${(growthRate * 100).toFixed(1)}%
+  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 当前水平(${Math.round(levelScore)}分)\n\n`;
+            }
+            
+            if (data.new_contributors?.length >= 2) {
+                const recentContributors = data.new_contributors.slice(-6);
+                const values = recentContributors.map(item => item.value);
+                const growthTrend = values.slice(1).reduce((acc, curr, idx) => {
+                    return acc + (curr - values[idx]) / values[idx];
+                }, 0) / (values.length - 1);
+                const avgContributors = values.reduce((a, b) => a + b, 0) / values.length;
+                const trendScore = Math.min(Math.max(growthTrend * 60, 0), 15);
+                const scaleScore = Math.min(avgContributors * 3, 15);
+                
+                explanation += `• 新贡献者增长 (${Math.round(trendScore + scaleScore)}/30分)：
+  - 月均新增：${avgContributors.toFixed(1)}人
+  - 增长趋势：${(growthTrend * 100).toFixed(1)}%
+  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 规模水平(${Math.round(scaleScore)}分)\n\n`;
+            }
+            
+            if (data.issue_response_time?.length >= 2) {
+                const recentResponseTime = data.issue_response_time.slice(-6);
+                const values = recentResponseTime.map(item => item.value);
+                const trendImprovement = values.slice(1).reduce((acc, curr, idx) => {
+                    return acc + (values[idx] - curr) / values[idx];
+                }, 0) / (values.length - 1);
+                const avgResponseTime = values.reduce((a, b) => a + b, 0) / values.length / 60;
+                const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
+                const speedScore = Math.min(Math.max(15 * (1 - avgResponseTime / 72), 0), 15);
+                
+                explanation += `• 社区响应活跃度 (${Math.round(trendScore + speedScore)}/30分)：
+  - 平均响应时间：${avgResponseTime.toFixed(1)}小时
+  - 响应改善趋势：${(trendImprovement * 100).toFixed(1)}%
+  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 响应速度(${Math.round(speedScore)}分)\n\n`;
+            }
+            
+            explanation += `总分：${totalScore}/100`;
+            break;
+
+        case 'impact':
+            explanation = '项目影响力与应用评分算法：\n\n';
+            
+            if (data.stars?.length >= 2) {
+                const recentStars = data.stars.slice(-6);
+                const values = recentStars.map(item => item.value);
+                const growthRate = (values[values.length - 1] - values[0]) / values[0];
+                const monthlyGrowth = values.slice(1).reduce((acc, curr, idx) => {
+                    return acc + (curr - values[idx]) / values[idx];
+                }, 0) / (values.length - 1);
+                const trendScore = Math.min(Math.max(monthlyGrowth * 120, 0), 20);
+                const scaleScore = Math.min(Math.max(growthRate * 80, 0), 20);
+                
+                explanation += `• Stars增长 (${Math.round(trendScore + scaleScore)}/40分)：
+  - 总增长率：${(growthRate * 100).toFixed(1)}%
+  - 月均增长率：${(monthlyGrowth * 100).toFixed(1)}%
+  - 评分说明：月度趋势(${Math.round(trendScore)}分) + 总体增长(${Math.round(scaleScore)}分)\n\n`;
+            }
+            
+            if (data.attention?.length >= 2) {
+                const recentAttention = data.attention.slice(-6);
+                const values = recentAttention.map(item => item.value);
+                const growthRate = (values[values.length - 1] - values[0]) / values[0];
+                const monthlyGrowth = values.slice(1).reduce((acc, curr, idx) => {
+                    return acc + (curr - values[idx]) / values[idx];
+                }, 0) / (values.length - 1);
+                const trendScore = Math.min(Math.max(monthlyGrowth * 90, 0), 15);
+                const scaleScore = Math.min(Math.max(growthRate * 60, 0), 15);
+                
+                explanation += `• 技术影响力 (${Math.round(trendScore + scaleScore)}/30分)：
+  - 总增长率：${(growthRate * 100).toFixed(1)}%
+  - 月均增长率：${(monthlyGrowth * 100).toFixed(1)}%
+  - 评分说明：月度趋势(${Math.round(trendScore)}分) + 总体增长(${Math.round(scaleScore)}分)\n\n`;
+            }
+            
+            if (data.technical_fork?.length >= 2) {
+                const recentForks = data.technical_fork.slice(-6);
+                const values = recentForks.map(item => item.value);
+                const growthRate = (values[values.length - 1] - values[0]) / values[0];
+                const currentRate = values[values.length - 1];
+                const trendScore = Math.min(Math.max(growthRate * 60, 0), 15);
+                const levelScore = Math.min(currentRate * 30, 15);
+                
+                explanation += `• Fork应用趋势 (${Math.round(trendScore + levelScore)}/30分)：
+  - 当前转化率：${(currentRate * 100).toFixed(2)}%
+  - 增长趋势：${(growthRate * 100).toFixed(1)}%
+  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 当前水平(${Math.round(levelScore)}分)\n\n`;
+            }
+            
+            explanation += `总分：${totalScore}/100`;
+            break;
+
+        case 'maintenance':
+            explanation = '项目维护与更新评分算法：\n\n';
+            
+            if (data.activity?.length >= 2) {
+                const recentActivity = data.activity.slice(-6);
+                const values = recentActivity.map(item => item.value);
+                const growthRate = (values[values.length - 1] - values[0]) / values[0];
+                const currentLevel = values[values.length - 1];
+                const trendScore = Math.min(Math.max(growthRate * 80, 0), 20);
+                const levelScore = Math.min(currentLevel * 4, 20);
+                
+                explanation += `• 维护频率 (${Math.round(trendScore + levelScore)}/40分)：
+  - 当前活动水平：${currentLevel.toFixed(1)}
+  - 活动增长率：${(growthRate * 100).toFixed(1)}%
+  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 当前水平(${Math.round(levelScore)}分)\n\n`;
+            }
+            
+            if (data.activity?.length >= 2) {
+                const recentActivity = data.activity.slice(-6);
+                const values = recentActivity.map(item => item.value);
+                const mean = values.reduce((a, b) => a + b, 0) / values.length;
+                const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
+                const cv = Math.sqrt(variance) / mean;
+                const halfLength = Math.floor(values.length / 2);
+                const firstHalfVariance = values.slice(0, halfLength).reduce((a, b) => a + Math.pow(b - mean, 2), 0) / halfLength;
+                const secondHalfVariance = values.slice(halfLength).reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (values.length - halfLength);
+                const varianceImprovement = (firstHalfVariance - secondHalfVariance) / firstHalfVariance;
+                const trendScore = Math.min(Math.max(varianceImprovement * 60, 0), 15);
+                const stabilityScore = Math.min(Math.max(15 * (1 - cv), 0), 15);
+                
+                explanation += `• 维护稳定性 (${Math.round(trendScore + stabilityScore)}/30分)：
+  - 活动波动系数：${cv.toFixed(2)}
+  - 波动改善率：${(varianceImprovement * 100).toFixed(1)}%
+  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 当前稳定性(${Math.round(stabilityScore)}分)\n\n`;
+            }
+            
+            if (data.activity?.length >= 2) {
+                const recentActivity = data.activity.slice(-6);
+                const values = recentActivity.map(item => item.value);
+                let gaps = 0;
+                for (let i = 1; i < values.length; i++) {
+                    if (values[i] < values[i-1] * 0.5) gaps++;
+                }
+                const growthRate = (values[values.length - 1] - values[0]) / values[0];
+                const trendScore = Math.min(Math.max(growthRate * 60, 0), 15);
+                const continuityScore = Math.min(Math.max(15 * (1 - gaps / values.length), 0), 15);
+                
+                explanation += `• 维护持续性 (${Math.round(trendScore + continuityScore)}/30分)：
+  - 活动中断次数：${gaps}次
+  - 整体增长率：${(growthRate * 100).toFixed(1)}%
+  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 连续性(${Math.round(continuityScore)}分)\n\n`;
+            }
+            
+            explanation += `总分：${totalScore}/100`;
+            break;
+
+        default:
+            explanation = '暂无评分说明';
+    }
+
+    return explanation;
 };
 
 const Dashboard = () => {
@@ -197,25 +609,10 @@ const Dashboard = () => {
     const open = Boolean(anchorEl);
 
     const algorithmExplanations = {
-        codeQuality: `代码质量与可维护性评分算法：
-• PR质量 (40分)：PR接受率，100%接受率得满分
-• 代码审查效率 (30分)：一周内完成审查得满分
-• Issue解决质量 (30分)：两周内解决问题得满分`,
-
-        community: `社区活跃度与贡献评分算法：
-• 贡献者多样性 (40分)：bus_factor每0.125提升1分
-• 新贡献者增长 (30分)：每月5位新贡献者得满分
-• 社区响应度 (30分)：24小时内响应得满分`,
-
-        impact: `项目影响力与应用评分算法：
-• Stars增长 (40分)：6个月增长率25%得满分
-• 技术影响力 (30分)：6个月增长率25%得满分
-• Fork转化率 (30分)：每0.5%得1分，最高30分`,
-
-        maintenance: `项目维护与更新评分算法：
-• 维护频率 (40分)：基于活动水平，每2.5得1分
-• 稳定性 (30分)：基于活动波动率，越稳定分数越高
-• 持续性 (30分)：6个月增长率25%得满分`
+        codeQuality: loadingData ? '数据加载中...' : getDetailedScoreExplanation('codeQuality', projectsData),
+        community: loadingData ? '数据加载中...' : getDetailedScoreExplanation('community', projectsData),
+        impact: loadingData ? '数据加载中...' : getDetailedScoreExplanation('impact', projectsData),
+        maintenance: loadingData ? '数据加载中...' : getDetailedScoreExplanation('maintenance', projectsData)
     };
 
     /**
