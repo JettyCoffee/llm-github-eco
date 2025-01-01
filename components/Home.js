@@ -11,7 +11,8 @@ import {
     ListItemButton,
     ListItemText,
     Fade,
-    Grid
+    Grid,
+    Link
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import useDebounce from '../hooks/useDebounce';
@@ -173,16 +174,48 @@ const Home = () => {
                     </Typography>
 
                     {/* 副标题 */}
-                    <Typography 
-                        variant="h5" 
-                        sx={{ 
-                            mb: 2,
-                            color: 'text.primary',
-                            fontWeight: 500
-                        }}
-                    >
-                        Data-OpenDigger
-                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 2 }}>
+                        <Link
+                            href="https://github.com/X-lab2017/open-digger"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                display: 'inline-block',
+                                '&:hover': {
+                                    opacity: 0.8
+                                }
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                src="/Data-OpenDigger-2097FF.svg"
+                                alt="Data OpenDigger"
+                                sx={{ 
+                                    height: '20px'
+                                }}
+                            />
+                        </Link>
+                        <Link
+                            href="https://github.com/zzsyppt/llm-eco-viz"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                display: 'inline-block',
+                                '&:hover': {
+                                    opacity: 0.8
+                                }
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                src="/Project-LLM-Eco-Viz-2196F3.svg"
+                                alt="Project LLM Eco Viz"
+                                sx={{ 
+                                    height: '20px'
+                                }}
+                            />
+                        </Link>
+                    </Box>
 
                     {/* 项目介绍 */}
                     <Typography 
@@ -199,6 +232,8 @@ const Home = () => {
                         本项目致力于构建一个开源AI大模型生态分析与可视化应用。通过深入分析GitHub数据，我们提供了全方位的开源项目洞察，
                         包括贡献者网络分析、影响力评估、活跃度追踪等多个维度。帮助开发者更好地理解AI开源生态系统的发展动态。
                     </Typography>
+
+
 
                     {/* 搜索框和下拉列表 */}
                     <Paper
@@ -218,7 +253,7 @@ const Home = () => {
                             <Box sx={{ position: 'relative', flex: 1 }}>
                                 <TextField
                                     fullWidth
-                                    placeholder="搜索并选择项目（例如：tvm）"
+                                    placeholder="项目分析 —— 搜索并选择项目（例如：tvm）"
                                     value={searchTerm}
                                     onChange={(e) => {
                                         setSearchTerm(e.target.value);
