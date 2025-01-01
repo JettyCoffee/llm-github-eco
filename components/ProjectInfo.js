@@ -285,7 +285,7 @@ const ProjectInfo = ({ project }) => {
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                             <StarIcon sx={{ color: 'warning.main', mr: 1 }} />
                             <Typography>
-                                {repoInfo.stargazers_count.toLocaleString()} Stars
+                                {repoInfo.stargazers_count.toLocaleString()} Total Stars
                             </Typography>
                         </Box>
                         <Box sx={{ height: 40 }}>
@@ -300,7 +300,7 @@ const ProjectInfo = ({ project }) => {
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                             <ForkRightIcon sx={{ color: 'success.main', mr: 1 }} />
                             <Typography>
-                                {repoInfo.forks_count.toLocaleString()} Forks
+                                {repoInfo.forks_count.toLocaleString()} Total Forks
                             </Typography>
                         </Box>
                         <Box sx={{ height: 40 }}>
