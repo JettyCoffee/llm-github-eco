@@ -45,7 +45,17 @@ const Header = () => {
                                 color: 'inherit'
                             }}
                         >
-                            <GitHubIcon sx={{ fontSize: 28, mr: 1 }} />
+                            <Box
+                                component="img"
+                                src="/header-logo.png"
+                                alt="Logo"
+                                sx={{
+                                    width: 32,
+                                    height: 32,
+                                    mr: 1,
+                                    filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))'
+                                }}
+                            />
                             <Typography
                                 variant="h6"
                                 sx={{
@@ -143,37 +153,6 @@ const Header = () => {
                         >
                             <DarkModeIcon sx={{ fontSize: 20 }} />
                         </IconButton>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 0.5,
-                                cursor: 'pointer',
-                                color: 'text.primary',
-                                '&:hover': { color: 'primary.main' },
-                                transition: 'color 0.3s ease'
-                            }}
-                            onClick={() => {
-                                if (window.sidebar && window.sidebar.addPanel) {
-                                    window.sidebar.addPanel(document.title, window.location.href, '');
-                                } else if (window.external && ('AddFavorite' in window.external)) {
-                                    window.external.AddFavorite(location.href, document.title);
-                                } else {
-                                    alert('请使用 Ctrl+D (Cmd+D) 收藏此页面。');
-                                }
-                            }}
-                        >
-                            <BookmarkBorderIcon sx={{ fontSize: 20 }} />
-                            <Typography 
-                                variant="body2"
-                                sx={{ 
-                                    fontWeight: 500,
-                                    display: { xs: 'none', sm: 'block' }
-                                }}
-                            >
-                                收藏
-                            </Typography>
-                        </Box>
 
                         <Box
                             component="a"
@@ -198,7 +177,7 @@ const Header = () => {
                                     display: { xs: 'none', sm: 'block' }
                                 }}
                             >
-                                我的项目
+                                网站项目地址
                             </Typography>
                         </Box>
                     </Box>

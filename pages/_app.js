@@ -7,6 +7,7 @@ import { ProjectProvider } from '../contexts/ProjectContext';
 import Header from '../components/Header';
 import { CacheProvider } from '@emotion/react';
 import createEmotionCache from '../utils/createEmotionCache';
+import Head from 'next/head';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -22,6 +23,11 @@ function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }) 
 
     return (
         <CacheProvider value={emotionCache}>
+            <Head>
+                <title>LLM Eco Visual</title>
+                <link rel="icon" href="/header-logo.png" />
+                <meta name="viewport" content="initial-scale=1, width=device-width" />
+            </Head>
             <ProjectProvider>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
