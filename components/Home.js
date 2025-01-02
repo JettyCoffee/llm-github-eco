@@ -229,11 +229,9 @@ const Home = () => {
                             fontSize: '1.1rem'
                         }}
                     >
-                        本项目致力于构建一个开源AI大模型生态分析与可视化应用。通过深入分析GitHub数据，我们提供了全方位的开源项目洞察，
-                        包括贡献者网络分析、影响力评估、活跃度追踪等多个维度。帮助开发者更好地理解AI开源生态系统的发展动态。
+                        本项目致力于构建一个开源 AI 大模型生态分析与可视化平台。通过深入分析 GitHub 数据，我们提供了全方位的项目评估体系，
+                        包括代码质量评估、社区活跃度分析、项目影响力衡量和维护状况追踪等多个维度。帮助开发者更好地了解和选择 AI 开源项目。
                     </Typography>
-
-
 
                     {/* 搜索框和下拉列表 */}
                     <Paper
@@ -253,7 +251,7 @@ const Home = () => {
                             <Box sx={{ position: 'relative', flex: 1 }}>
                                 <TextField
                                     fullWidth
-                                    placeholder="项目分析 —— 搜索并选择项目（例如：tvm）"
+                                    placeholder="输入项目名称（例如：microsoft/deepspeed）进行分析"
                                     value={searchTerm}
                                     onChange={(e) => {
                                         setSearchTerm(e.target.value);
@@ -350,7 +348,7 @@ const Home = () => {
                             color: 'text.primary'
                         }}
                     >
-                        项目特点
+                        评分体系
                     </Typography>
                     <Typography 
                         component="div"
@@ -365,22 +363,42 @@ const Home = () => {
                     >
                         <Box component="ul" sx={{ pl: 2 }}>
                             <Box component="li" sx={{ mb: 2 }}>
-                                <strong>数据分析：</strong> 基于 OpenDigger 提供的开源数据，深入分析项目发展趋势和贡献者行为。
+                                <strong>代码质量与可维护性：</strong> 
+                                <ul>
+                                    <li>PR 质量趋势（40%）：分析 PR 接受率变化和当前水平</li>
+                                    <li>代码审查效率（30%）：评估 PR 处理时间和改善趋势</li>
+                                    <li>Issue 解决质量（30%）：衡量问题解决速度和效率提升</li>
+                                </ul>
                             </Box>
                             <Box component="li" sx={{ mb: 2 }}>
-                                <strong>生态洞察：</strong> 通过可视化展示项目间的关联性，帮助理解 AI 开源生态系统的发展脉络。
+                                <strong>社区活跃度与贡献：</strong>
+                                <ul>
+                                    <li>贡献者多样性（40%）：基于 Bus Factor 评估社区健康度</li>
+                                    <li>新贡献者增长（30%）：追踪社区扩张速度和规模</li>
+                                    <li>社区响应活跃度（30%）：分析 Issue 响应时间和改善情况</li>
+                                </ul>
                             </Box>
                             <Box component="li" sx={{ mb: 2 }}>
-                                <strong>影响力评估：</strong> 结合多维度指标，科学评估项目在生态中的影响力和发展潜力。
+                                <strong>项目影响力与应用：</strong>
+                                <ul>
+                                    <li>Stars 增长趋势（40%）：评估项目受欢迎程度</li>
+                                    <li>技术影响力趋势（30%）：分析项目在生态中的地位</li>
+                                    <li>Fork 应用情况（30%）：衡量项目的实际应用价值</li>
+                                </ul>
                             </Box>
                             <Box component="li">
-                                <strong>实时追踪：</strong> 持续监控项目活跃度，及时反映社区动态和发展趋势。
+                                <strong>项目维护与更新：</strong>
+                                <ul>
+                                    <li>维护频率趋势（40%）：评估项目活动水平和增长情况</li>
+                                    <li>维护稳定性（30%）：分析活动波动和改善趋势</li>
+                                    <li>维护持续性（30%）：追踪长期维护质量和连续性</li>
+                                </ul>
                             </Box>
                         </Box>
                     </Typography>
                 </Box>
 
-                {/* 技术栈 */}
+                {/* 数据分析与可视化 */}
                 <Box sx={{ py: 8, textAlign: 'center' }}>
                     <Typography 
                         variant="h4" 
@@ -390,7 +408,7 @@ const Home = () => {
                             color: 'text.primary'
                         }}
                     >
-                        技术栈
+                        数据分析与可视化
                     </Typography>
                     <Grid container spacing={4} justifyContent="center">
                         <Grid item xs={12} md={4}>
@@ -404,9 +422,9 @@ const Home = () => {
                                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>前端技术</Typography>
+                                <Typography variant="h6" gutterBottom>项目关注度分析</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Next.js, React, Material-UI, ECharts
+                                    追踪 Stars、Attention 等指标的变化趋势，展示项目在社区中的关注度变化
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -421,9 +439,9 @@ const Home = () => {
                                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>数据分析</Typography>
+                                <Typography variant="h6" gutterBottom>代码变更分析</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    OpenDigger, Python, Pandas
+                                    分析代码提交、PR 处理和 Issue 解决等行为，展示项目的开发活动特征
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -438,16 +456,16 @@ const Home = () => {
                                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>API 集成</Typography>
+                                <Typography variant="h6" gutterBottom>活跃度追踪</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    GitHub API, Hugging Face API
+                                    监控项目整体活跃度和 OpenRank 变化，反映项目的综合发展状况
                                 </Typography>
                             </Paper>
                         </Grid>
                     </Grid>
                 </Box>
 
-                {/* 团队介绍 */}
+                {/* 技术架构 */}
                 <Box sx={{ py: 8, textAlign: 'center' }}>
                     <Typography 
                         variant="h4" 
@@ -457,7 +475,83 @@ const Home = () => {
                             color: 'text.primary'
                         }}
                     >
-                        团队成员
+                        技术架构
+                    </Typography>
+                    <Grid container spacing={4} justifyContent="center">
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>前端技术栈</Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    • Next.js 15 + React 19<br/>
+                                    • Material-UI 组件库<br/>
+                                    • ECharts 数据可视化<br/>
+                                    • Tailwind CSS 样式管理
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>数据处理</Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    • OpenDigger 数据源<br/>
+                                    • Python 数据分析<br/>
+                                    • Supabase 数据存储<br/>
+                                    • RESTful API 接口
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>部署环境</Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    • Vercel 平台部署<br/>
+                                    • GitHub Actions CI/CD<br/>
+                                    • 环境变量配置<br/>
+                                    • 自动化构建部署
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </Box>
+
+                {/* 开发团队 */}
+                <Box sx={{ py: 8, textAlign: 'center' }}>
+                    <Typography 
+                        variant="h4" 
+                        sx={{ 
+                            mb: 4,
+                            fontWeight: 600,
+                            color: 'text.primary'
+                        }}
+                    >
+                        开发团队
                     </Typography>
                     <Grid container spacing={4} justifyContent="center">
                         <Grid item xs={12} md={6}>
@@ -473,7 +567,10 @@ const Home = () => {
                             >
                                 <Typography variant="h6" gutterBottom>@zzsyppt</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Hugging Face 数据获取与处理；大模型生态网络制作；影响力算法设计；网页应用制作
+                                    • 评分算法设计与实现<br/>
+                                    • 数据分析模块开发<br/>
+                                    • 可视化图表设计<br/>
+                                    • 前端架构搭建
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -490,7 +587,10 @@ const Home = () => {
                             >
                                 <Typography variant="h6" gutterBottom>@JettyCoffee</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    GitHub 数据获取与处理；大模型数据大屏制作；影响力算法设计；网页应用制作
+                                    • 数据获取与处理<br/>
+                                    • API 接口开发<br/>
+                                    • 前端界面实现<br/>
+                                    • 项目部署维护
                                 </Typography>
                             </Paper>
                         </Grid>
