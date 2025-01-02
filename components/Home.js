@@ -12,12 +12,14 @@ import {
     ListItemText,
     Fade,
     Grid,
-    Link
+    Link,
+    Chip
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import useDebounce from '../hooks/useDebounce';
 import { getDeepestProjects } from '../utils/helpers';
 import { ProjectContext } from '../contexts/ProjectContext';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const Home = () => {
     const { selectedProjects, setSelectedProjects } = useContext(ProjectContext);
@@ -338,64 +340,331 @@ const Home = () => {
                     </Paper>
                 </Box>
 
-                {/* 平台功能 */}
+                {/* 项目分析结果 */}
+                {selectedProject && (
+                    <Box sx={{ py: 8 }}>
+                        {/* 基本信息区 */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 4,
+                                mb: 4,
+                                borderRadius: 2,
+                                bgcolor: 'background.paper',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                            }}
+                        >
+                            <Typography variant="h5" gutterBottom>
+                                {selectedProject}
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                                <Link href={`https://github.com/${selectedProject}`} target="_blank">
+                                    <Button startIcon={<GitHubIcon />} size="small">
+                                        GitHub
+                                    </Button>
+                                </Link>
+                                <Chip label="Python" size="small" />
+                                <Chip label="MIT License" size="small" />
+                            </Box>
+                            <Typography variant="body2" color="text.secondary">
+                                项目简介和主要特点描述
+                            </Typography>
+                        </Paper>
+
+                        {/* 评分卡片区 */}
+                        <Grid container spacing={3} sx={{ mb: 4 }}>
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 3,
+                                        height: '100%',
+                                        borderRadius: 2,
+                                        cursor: 'pointer',
+                                        transition: 'transform 0.2s',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                        },
+                                    }}
+                                >
+                                    <Typography variant="h6" gutterBottom>
+                                        代码质量评分
+                                    </Typography>
+                                    <Typography variant="h3" color="primary">
+                                        89
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        PR接受率: 95%
+                                        代码审查效率: 高
+                                        Issue解决质量: 优
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 3,
+                                        height: '100%',
+                                        borderRadius: 2,
+                                        cursor: 'pointer',
+                                        transition: 'transform 0.2s',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                        },
+                                    }}
+                                >
+                                    <Typography variant="h6" gutterBottom>
+                                        社区活跃度评分
+                                    </Typography>
+                                    <Typography variant="h3" color="primary">
+                                        92
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        贡献者数量: 增长中
+                                        社区响应: 快速
+                                        互动频率: 高
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 3,
+                                        height: '100%',
+                                        borderRadius: 2,
+                                        cursor: 'pointer',
+                                        transition: 'transform 0.2s',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                        },
+                                    }}
+                                >
+                                    <Typography variant="h6" gutterBottom>
+                                        项目影响力评分
+                                    </Typography>
+                                    <Typography variant="h3" color="primary">
+                                        88
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Stars趋势: 上升
+                                        技术影响: 广泛
+                                        应用案例: 丰富
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 3,
+                                        height: '100%',
+                                        borderRadius: 2,
+                                        cursor: 'pointer',
+                                        transition: 'transform 0.2s',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                        },
+                                    }}
+                                >
+                                    <Typography variant="h6" gutterBottom>
+                                        项目维护评分
+                                    </Typography>
+                                    <Typography variant="h3" color="primary">
+                                        85
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        更新频率: 稳定
+                                        维护质量: 良好
+                                        长期支持: 有保障
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                        </Grid>
+
+                        {/* 时序图表区 */}
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 3,
+                                        borderRadius: 2,
+                                        bgcolor: 'background.paper',
+                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                    }}
+                                >
+                                    <Typography variant="h6" gutterBottom>
+                                        关注度趋势
+                                    </Typography>
+                                    <Box sx={{ height: 400 }}>
+                                        {/* ECharts图表组件 */}
+                                    </Box>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 3,
+                                        borderRadius: 2,
+                                        bgcolor: 'background.paper',
+                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                    }}
+                                >
+                                    <Typography variant="h6" gutterBottom>
+                                        OpenRank趋势
+                                    </Typography>
+                                    <Box sx={{ height: 400 }}>
+                                        {/* ECharts图表组件 */}
+                                    </Box>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 3,
+                                        borderRadius: 2,
+                                        bgcolor: 'background.paper',
+                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                    }}
+                                >
+                                    <Typography variant="h6" gutterBottom>
+                                        活跃度分析
+                                    </Typography>
+                                    <Box sx={{ height: 400 }}>
+                                        {/* ECharts图表组件 */}
+                                    </Box>
+                                </Paper>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                )}
+
+                {/* 使用指南 */}
                 <Box sx={{ py: 8, textAlign: 'center' }}>
                     <Typography 
                         variant="h4" 
                         sx={{ 
-                            mb: 4,
+                            mb: 6,
                             fontWeight: 600,
                             color: 'text.primary'
                         }}
                     >
-                        平台功能
+                        使用指南
                     </Typography>
-                    <Typography 
-                        component="div"
-                        sx={{ 
-                            color: 'text.secondary',
-                            maxWidth: '800px',
-                            mx: 'auto',
-                            lineHeight: 1.8,
-                            fontSize: '1.1rem',
-                            textAlign: 'left'
-                        }}
-                    >
-                        <Box component="ul" sx={{ pl: 2 }}>
-                            <Box component="li" sx={{ mb: 2 }}>
-                                <strong>GitHub 项目分析：</strong>
-                                <ul>
-                                    <li>基于 OpenDigger 数据的多维度评分体系</li>
-                                    <li>项目活跃度和影响力可视化分析</li>
-                                    <li>代码质量和社区健康度评估</li>
-                                </ul>
-                            </Box>
-                            <Box component="li" sx={{ mb: 2 }}>
-                                <strong>Hugging Face 模型排行：</strong>
-                                <ul>
-                                    <li>大模型影响力排行榜</li>
-                                    <li>多维度筛选和排序功能</li>
-                                    <li>模型详细信息快速查看</li>
-                                </ul>
-                            </Box>
-                            <Box component="li" sx={{ mb: 2 }}>
-                                <strong>生态网络分析：</strong>
-                                <ul>
-                                    <li>模型衍生关系可视化</li>
-                                    <li>多视图切换（Top 100/完整网络/作者分组等）</li>
-                                    <li>互动式网络图探索</li>
-                                </ul>
-                            </Box>
-                            <Box component="li">
-                                <strong>生态数据大屏：</strong>
-                                <ul>
-                                    <li>语言支持情况分析</li>
-                                    <li>作者和组织影响力排行</li>
-                                    <li>任务类型分布统计</li>
-                                </ul>
-                            </Box>
-                        </Box>
-                    </Typography>
+                    <Grid container spacing={4} justifyContent="center">
+                        {/* GitHub项目分析 */}
+                        <Grid item xs={12} md={6}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 4,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                                    <GitHubIcon sx={{ fontSize: 28, mr: 2, color: 'text.primary' }} />
+                                    <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                                        GitHub项目分析
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ textAlign: 'left' }}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
+                                        1. 搜索与选择
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
+                                        • 在主页搜索框输入项目名称<br/>
+                                        • 从下拉列表选择目标项目<br/>
+                                        • 点击"分析"按钮开始分析
+                                    </Typography>
+
+                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
+                                        2. 查看评分详情
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
+                                        • 点击评分卡片查看详细指标<br/>
+                                        • 了解代码质量评分依据<br/>
+                                        • 分析社区活跃度数据<br/>
+                                        • 评估项目影响力表现
+                                    </Typography>
+
+                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
+                                        3. 使用时序图表
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ pl: 2 }}>
+                                        • 调整时间范围分析趋势<br/>
+                                        • 使用缩放工具查看细节<br/>
+                                        • 导出数据生成分析报告
+                                    </Typography>
+                                </Box>
+                            </Paper>
+                        </Grid>
+
+                        {/* Hugging Face模型排行 */}
+                        <Grid item xs={12} md={6}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 4,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                                    <Box 
+                                        component="img"
+                                        src="/hf-logo.svg"
+                                        alt="Hugging Face"
+                                        sx={{ height: 28, mr: 2 }}
+                                    />
+                                    <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                                        Hugging Face分析
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ textAlign: 'left' }}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
+                                        1. 模型排行榜
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
+                                        • 点击导航栏"模型排行"进入<br/>
+                                        • 使用筛选器选择任务类型<br/>
+                                        • 按各项指标进行排序<br/>
+                                        • 搜索特定模型查看详情
+                                    </Typography>
+
+                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
+                                        2. 生态网络分析
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
+                                        • 点击"view"查看网络图<br/>
+                                        • 选择不同的视图模式：<br/>
+                                        &nbsp;&nbsp;- Top 100衍生模型<br/>
+                                        &nbsp;&nbsp;- 完整衍生关系<br/>
+                                        &nbsp;&nbsp;- 按作者分组视图<br/>
+                                        • 交互式探索网络关系
+                                    </Typography>
+
+                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
+                                        3. 生态大屏分析
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ pl: 2 }}>
+                                        • 查看语言支持分布<br/>
+                                        • 分析作者影响力排名<br/>
+                                        • 了解组织类型分布<br/>
+                                        • 掌握任务类型热度
+                                    </Typography>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                    </Grid>
                 </Box>
 
                 {/* 技术实现 */}
