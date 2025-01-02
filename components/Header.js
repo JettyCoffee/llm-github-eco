@@ -139,7 +139,7 @@ const Header = () => {
                             模型排行榜
                         </Link>
                         <Link
-                            href="http://127.0.0.1:5000/dashboard/"
+                            href="https://huggingface.jettycoffee.cn:5000/leaderboard/"
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{

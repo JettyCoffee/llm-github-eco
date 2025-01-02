@@ -5,7 +5,7 @@ export default function Rankings() {
     const router = useRouter();
 
     useEffect(() => {
-        window.location.href = 'http://127.0.0.1:5000/leaderboard/';
+        window.location.href = 'https://huggingface.jettycoffee.cn:5000/leaderboard/';
     }, []);
 
     return (
