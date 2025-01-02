@@ -28,7 +28,7 @@ const calculateCodeQualityScore = (projectsData) => {
         let score = 0;
         let metrics = 0;
 
-        // 1. PR 质量趋势 (40分)
+        // 1. PR 质量趋势 (权重：40)
         if (data.change_requests?.length >= 2 && data.change_requests_accepted?.length >= 2) {
             const recentPRs = data.change_requests.slice(-6);
             const recentAccepted = data.change_requests_accepted.slice(-6);
@@ -38,16 +38,16 @@ const calculateCodeQualityScore = (projectsData) => {
             const endRate = recentAccepted[recentAccepted.length - 1].value / recentPRs[recentPRs.length - 1].value;
             const rateChange = endRate - startRate;
             
-            // 趋势得分：接受率提升得高分
-            const trendScore = Math.min(Math.max(rateChange * 100, 0), 20);
-            // 当前水平得分：当前接受率越高得分越高
-            const levelScore = Math.min(endRate * 20, 20);
+            // 趋势得分：接受率提升得分（不设上限）
+            const trendScore = Math.max(rateChange * 150, 0);
+            // 当前水平得分：当前接受率得分（不设上限）
+            const levelScore = endRate * 100;
             
-            score += trendScore + levelScore;
+            score += (trendScore + levelScore) * 0.4; // 权重40%
             metrics++;
         }
 
-        // 2. 代码审查效率趋势 (30分)
+        // 2. 代码审查效率趋势 (权重：30)
         if (data.change_request_resolution_duration?.length >= 2) {
             const recentDurations = data.change_request_resolution_duration.slice(-6);
             const values = recentDurations.map(item => item.value);
@@ -60,16 +60,16 @@ const calculateCodeQualityScore = (projectsData) => {
             // 计算平均处理时间（小时）
             const avgDuration = values.reduce((a, b) => a + b, 0) / values.length / 60;
             
-            // 趋势得分：改善趋势得高分
-            const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
-            // 速度得分：处理时间越短得分越高
-            const speedScore = Math.min(Math.max(15 * (1 - avgDuration / (7 * 24)), 0), 15);
+            // 趋势得分：改善趋势得分（不设上限）
+            const trendScore = Math.max(trendImprovement * 200, 0);
+            // 速度得分：处理时间越短得分越高（使用指数衰减）
+            const speedScore = 100 * Math.exp(-avgDuration / (7 * 24));
             
-            score += trendScore + speedScore;
+            score += (trendScore + speedScore) * 0.3; // 权重30%
             metrics++;
         }
 
-        // 3. Issue 解决质量趋势 (30分)
+        // 3. Issue 解决质量趋势 (权重：30)
         if (data.issue_resolution_duration?.length >= 2) {
             const recentDurations = data.issue_resolution_duration.slice(-6);
             const values = recentDurations.map(item => item.value);
@@ -82,12 +82,12 @@ const calculateCodeQualityScore = (projectsData) => {
             // 计算平均解决时间（小时）
             const avgDuration = values.reduce((a, b) => a + b, 0) / values.length / 60;
             
-            // 趋势得分：改善趋势得高分
-            const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
-            // 速度得分：解决时间越短得分越高
-            const speedScore = Math.min(Math.max(15 * (1 - avgDuration / (14 * 24)), 0), 15);
+            // 趋势得分：改善趋势得分（不设上限）
+            const trendScore = Math.max(trendImprovement * 200, 0);
+            // 速度得分：解决时间越短得分越高（使用指数衰减）
+            const speedScore = 100 * Math.exp(-avgDuration / (14 * 24));
             
-            score += trendScore + speedScore;
+            score += (trendScore + speedScore) * 0.3; // 权重30%
             metrics++;
         }
 
@@ -377,13 +377,14 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                 const startRate = recentAccepted[0].value / recentPRs[0].value;
                 const endRate = recentAccepted[recentAccepted.length - 1].value / recentPRs[recentPRs.length - 1].value;
                 const rateChange = endRate - startRate;
-                const trendScore = Math.min(Math.max(rateChange * 100, 0), 20);
-                const levelScore = Math.min(endRate * 20, 20);
+                const trendScore = Math.max(rateChange * 150, 0);
+                const levelScore = endRate * 100;
                 
-                explanation += `• PR质量 (${Math.round(trendScore + levelScore)}/40分)：
+                explanation += `• PR质量 (权重40%)：
   - 当前接受率：${(endRate * 100).toFixed(1)}%
   - 接受率变化：${(rateChange * 100).toFixed(1)}%
-  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 当前水平(${Math.round(levelScore)}分)\n\n`;
+  - 评分说明：改善趋势(${Math.round(trendScore)}) + 当前水平(${Math.round(levelScore)})
+  - 加权得分：${Math.round((trendScore + levelScore) * 0.4)}\n\n`;
             }
             
             if (data.change_request_resolution_duration?.length >= 2) {
@@ -393,13 +394,14 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                     return acc + (values[idx] - curr) / values[idx];
                 }, 0) / (values.length - 1);
                 const avgDuration = values.reduce((a, b) => a + b, 0) / values.length / 60;
-                const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
-                const speedScore = Math.min(Math.max(15 * (1 - avgDuration / (7 * 24)), 0), 15);
+                const trendScore = Math.max(trendImprovement * 200, 0);
+                const speedScore = 100 * Math.exp(-avgDuration / (7 * 24));
                 
-                explanation += `• 代码审查效率 (${Math.round(trendScore + speedScore)}/30分)：
+                explanation += `• 代码审查效率 (权重30%)：
   - 平均处理时间：${avgDuration.toFixed(1)}小时
   - 处理速度改善：${(trendImprovement * 100).toFixed(1)}%
-  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 处理速度(${Math.round(speedScore)}分)\n\n`;
+  - 评分说明：改善趋势(${Math.round(trendScore)}) + 速度得分(${Math.round(speedScore)})
+  - 加权得分：${Math.round((trendScore + speedScore) * 0.3)}\n\n`;
             }
             
             if (data.issue_resolution_duration?.length >= 2) {
@@ -409,16 +411,17 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                     return acc + (values[idx] - curr) / values[idx];
                 }, 0) / (values.length - 1);
                 const avgDuration = values.reduce((a, b) => a + b, 0) / values.length / 60;
-                const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
-                const speedScore = Math.min(Math.max(15 * (1 - avgDuration / (14 * 24)), 0), 15);
+                const trendScore = Math.max(trendImprovement * 200, 0);
+                const speedScore = 100 * Math.exp(-avgDuration / (14 * 24));
                 
-                explanation += `• Issue解决质量 (${Math.round(trendScore + speedScore)}/30分)：
+                explanation += `• Issue解决质量 (权重30%)：
   - 平均解决时间：${avgDuration.toFixed(1)}小时
   - 解决速度改善：${(trendImprovement * 100).toFixed(1)}%
-  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 解决速度(${Math.round(speedScore)}分)\n\n`;
+  - 评分说明：改善趋势(${Math.round(trendScore)}) + 速度得分(${Math.round(speedScore)})
+  - 加权得分：${Math.round((trendScore + speedScore) * 0.3)}\n\n`;
             }
             
-            explanation += `总分：${totalScore}/100`;
+            explanation += `总分：${totalScore}`;
             break;
 
         case 'community':
@@ -432,10 +435,11 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                 const trendScore = Math.min(Math.max(growthRate * 100, -20), 20);
                 const levelScore = Math.min(endValue * 4, 20);
                 
-                explanation += `• 贡献者多样性 (${Math.round(trendScore + levelScore)}/40分)：
+                explanation += `• 贡献者多样性 (权重40%)：
   - 当前 Bus Factor：${endValue.toFixed(2)}
   - 6个月增长率：${(growthRate * 100).toFixed(1)}%
-  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 当前水平(${Math.round(levelScore)}分)\n\n`;
+  - 评分说明：增长趋势(${Math.round(trendScore)}) + 当前水平(${Math.round(levelScore)})
+  - 总得分：${Math.round(trendScore + levelScore)}\n\n`;
             }
             
             if (data.new_contributors?.length >= 2) {
@@ -445,13 +449,14 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                     return acc + (curr - values[idx]) / values[idx];
                 }, 0) / (values.length - 1);
                 const avgContributors = values.reduce((a, b) => a + b, 0) / values.length;
-                const trendScore = Math.min(Math.max(growthTrend * 60, 0), 15);
+                const trendScore = Math.min(Math.max(growthTrend * 60, -15), 15);
                 const scaleScore = Math.min(avgContributors * 3, 15);
                 
-                explanation += `• 新贡献者增长 (${Math.round(trendScore + scaleScore)}/30分)：
+                explanation += `• 新贡献者增长 (权重30%)：
   - 月均新增：${avgContributors.toFixed(1)}人
   - 增长趋势：${(growthTrend * 100).toFixed(1)}%
-  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 规模水平(${Math.round(scaleScore)}分)\n\n`;
+  - 评分说明：增长趋势(${Math.round(trendScore)}) + 规模水平(${Math.round(scaleScore)})
+  - 总得分：${Math.round(trendScore + scaleScore)}\n\n`;
             }
             
             if (data.issue_response_time?.length >= 2) {
@@ -461,16 +466,17 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                     return acc + (values[idx] - curr) / values[idx];
                 }, 0) / (values.length - 1);
                 const avgResponseTime = values.reduce((a, b) => a + b, 0) / values.length / 60;
-                const trendScore = Math.min(Math.max(trendImprovement * 60, 0), 15);
-                const speedScore = Math.min(Math.max(15 * (1 - avgResponseTime / 72), 0), 15);
+                const trendScore = Math.min(Math.max(trendImprovement * 60, -15), 15);
+                const speedScore = Math.min(Math.max(15 * (1 - avgResponseTime / 72), -15), 15);
                 
-                explanation += `• 社区响应活跃度 (${Math.round(trendScore + speedScore)}/30分)：
+                explanation += `• 社区响应活跃度 (权重30%)：
   - 平均响应时间：${avgResponseTime.toFixed(1)}小时
   - 响应改善趋势：${(trendImprovement * 100).toFixed(1)}%
-  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 响应速度(${Math.round(speedScore)}分)\n\n`;
+  - 评分说明：改善趋势(${Math.round(trendScore)}) + 响应速度(${Math.round(speedScore)})
+  - 总得分：${Math.round(trendScore + speedScore)}\n\n`;
             }
             
-            explanation += `总分：${totalScore}/100`;
+            explanation += `总分：${totalScore}`;
             break;
 
         case 'impact':
@@ -483,13 +489,14 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                 const monthlyGrowth = values.slice(1).reduce((acc, curr, idx) => {
                     return acc + (curr - values[idx]) / values[idx];
                 }, 0) / (values.length - 1);
-                const trendScore = Math.min(Math.max(monthlyGrowth * 120, 0), 20);
-                const scaleScore = Math.min(Math.max(growthRate * 80, 0), 20);
+                const trendScore = Math.min(Math.max(monthlyGrowth * 120, -20), 20);
+                const scaleScore = Math.min(Math.max(growthRate * 80, -20), 20);
                 
-                explanation += `• Stars增长 (${Math.round(trendScore + scaleScore)}/40分)：
+                explanation += `• Stars增长 (权重40%)：
   - 总增长率：${(growthRate * 100).toFixed(1)}%
   - 月均增长率：${(monthlyGrowth * 100).toFixed(1)}%
-  - 评分说明：月度趋势(${Math.round(trendScore)}分) + 总体增长(${Math.round(scaleScore)}分)\n\n`;
+  - 评分说明：月度趋势(${Math.round(trendScore)}) + 总体增长(${Math.round(scaleScore)})
+  - 总得分：${Math.round(trendScore + scaleScore)}\n\n`;
             }
             
             if (data.attention?.length >= 2) {
@@ -499,13 +506,14 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                 const monthlyGrowth = values.slice(1).reduce((acc, curr, idx) => {
                     return acc + (curr - values[idx]) / values[idx];
                 }, 0) / (values.length - 1);
-                const trendScore = Math.min(Math.max(monthlyGrowth * 90, 0), 15);
-                const scaleScore = Math.min(Math.max(growthRate * 60, 0), 15);
+                const trendScore = Math.min(Math.max(monthlyGrowth * 90, -15), 15);
+                const scaleScore = Math.min(Math.max(growthRate * 60, -15), 15);
                 
-                explanation += `• 技术影响力 (${Math.round(trendScore + scaleScore)}/30分)：
+                explanation += `• 技术影响力 (权重30%)：
   - 总增长率：${(growthRate * 100).toFixed(1)}%
   - 月均增长率：${(monthlyGrowth * 100).toFixed(1)}%
-  - 评分说明：月度趋势(${Math.round(trendScore)}分) + 总体增长(${Math.round(scaleScore)}分)\n\n`;
+  - 评分说明：月度趋势(${Math.round(trendScore)}) + 总体增长(${Math.round(scaleScore)})
+  - 总得分：${Math.round(trendScore + scaleScore)}\n\n`;
             }
             
             if (data.technical_fork?.length >= 2) {
@@ -513,16 +521,17 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                 const values = recentForks.map(item => item.value);
                 const growthRate = (values[values.length - 1] - values[0]) / values[0];
                 const currentRate = values[values.length - 1];
-                const trendScore = Math.min(Math.max(growthRate * 60, 0), 15);
-                const levelScore = Math.min(currentRate * 30, 15);
+                const trendScore = Math.min(Math.max(growthRate * 60, -15), 15);
+                const levelScore = Math.min(Math.max(currentRate * 30, -15), 15);
                 
-                explanation += `• Fork应用趋势 (${Math.round(trendScore + levelScore)}/30分)：
+                explanation += `• Fork应用趋势 (权重30%)：
   - 当前转化率：${(currentRate * 100).toFixed(2)}%
   - 增长趋势：${(growthRate * 100).toFixed(1)}%
-  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 当前水平(${Math.round(levelScore)}分)\n\n`;
+  - 评分说明：增长趋势(${Math.round(trendScore)}) + 当前水平(${Math.round(levelScore)})
+  - 总得分：${Math.round(trendScore + levelScore)}\n\n`;
             }
             
-            explanation += `总分：${totalScore}/100`;
+            explanation += `总分：${totalScore}`;
             break;
 
         case 'maintenance':
@@ -533,13 +542,14 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                 const values = recentActivity.map(item => item.value);
                 const growthRate = (values[values.length - 1] - values[0]) / values[0];
                 const currentLevel = values[values.length - 1];
-                const trendScore = Math.min(Math.max(growthRate * 80, 0), 20);
-                const levelScore = Math.min(currentLevel * 4, 20);
+                const trendScore = Math.min(Math.max(growthRate * 80, -20), 20);
+                const levelScore = Math.min(Math.max(currentLevel * 4, -20), 20);
                 
-                explanation += `• 维护频率 (${Math.round(trendScore + levelScore)}/40分)：
+                explanation += `• 维护频率 (权重40%)：
   - 当前活动水平：${currentLevel.toFixed(1)}
   - 活动增长率：${(growthRate * 100).toFixed(1)}%
-  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 当前水平(${Math.round(levelScore)}分)\n\n`;
+  - 评分说明：增长趋势(${Math.round(trendScore)}) + 当前水平(${Math.round(levelScore)})
+  - 总得分：${Math.round(trendScore + levelScore)}\n\n`;
             }
             
             if (data.activity?.length >= 2) {
@@ -552,13 +562,14 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                 const firstHalfVariance = values.slice(0, halfLength).reduce((a, b) => a + Math.pow(b - mean, 2), 0) / halfLength;
                 const secondHalfVariance = values.slice(halfLength).reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (values.length - halfLength);
                 const varianceImprovement = (firstHalfVariance - secondHalfVariance) / firstHalfVariance;
-                const trendScore = Math.min(Math.max(varianceImprovement * 60, 0), 15);
-                const stabilityScore = Math.min(Math.max(15 * (1 - cv), 0), 15);
+                const trendScore = Math.min(Math.max(varianceImprovement * 60, -15), 15);
+                const stabilityScore = Math.min(Math.max(15 * (1 - cv), -15), 15);
                 
-                explanation += `• 维护稳定性 (${Math.round(trendScore + stabilityScore)}/30分)：
+                explanation += `• 维护稳定性 (权重30%)：
   - 活动波动系数：${cv.toFixed(2)}
   - 波动改善率：${(varianceImprovement * 100).toFixed(1)}%
-  - 评分说明：改善趋势(${Math.round(trendScore)}分) + 当前稳定性(${Math.round(stabilityScore)}分)\n\n`;
+  - 评分说明：改善趋势(${Math.round(trendScore)}) + 当前稳定性(${Math.round(stabilityScore)})
+  - 总得分：${Math.round(trendScore + stabilityScore)}\n\n`;
             }
             
             if (data.activity?.length >= 2) {
@@ -569,16 +580,17 @@ const getDetailedScoreExplanation = (type, projectsData) => {
                     if (values[i] < values[i-1] * 0.5) gaps++;
                 }
                 const growthRate = (values[values.length - 1] - values[0]) / values[0];
-                const trendScore = Math.min(Math.max(growthRate * 60, 0), 15);
-                const continuityScore = Math.min(Math.max(15 * (1 - gaps / values.length), 0), 15);
+                const trendScore = Math.min(Math.max(growthRate * 60, -15), 15);
+                const continuityScore = Math.min(Math.max(15 * (1 - gaps / values.length), -15), 15);
                 
-                explanation += `• 维护持续性 (${Math.round(trendScore + continuityScore)}/30分)：
+                explanation += `• 维护持续性 (权重30%)：
   - 活动中断次数：${gaps}次
   - 整体增长率：${(growthRate * 100).toFixed(1)}%
-  - 评分说明：增长趋势(${Math.round(trendScore)}分) + 连续性(${Math.round(continuityScore)}分)\n\n`;
+  - 评分说明：增长趋势(${Math.round(trendScore)}) + 连续性(${Math.round(continuityScore)})
+  - 总得分：${Math.round(trendScore + continuityScore)}\n\n`;
             }
             
-            explanation += `总分：${totalScore}/100`;
+            explanation += `总分：${totalScore}`;
             break;
 
         default:
@@ -763,7 +775,7 @@ const Dashboard = () => {
                                 />
                             </Box>
                             <Typography variant="h4" sx={{ color: 'success.main', fontWeight: 500 }}>
-                                {calculateCodeQualityScore(projectsData)}/100
+                                {calculateCodeQualityScore(projectsData)}
                             </Typography>
                         </Paper>
 
@@ -797,7 +809,7 @@ const Dashboard = () => {
                                 />
                             </Box>
                             <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 500 }}>
-                                {calculateCommunityScore(projectsData)}/100
+                                {calculateCommunityScore(projectsData)}
                             </Typography>
                         </Paper>
 
@@ -831,7 +843,7 @@ const Dashboard = () => {
                                 />
                             </Box>
                             <Typography variant="h4" sx={{ color: 'warning.main', fontWeight: 500 }}>
-                                {calculateImpactScore(projectsData)}/100
+                                {calculateImpactScore(projectsData)}
                             </Typography>
                         </Paper>
 
@@ -865,7 +877,7 @@ const Dashboard = () => {
                                 />
                             </Box>
                             <Typography variant="h4" sx={{ color: 'info.main', fontWeight: 500 }}>
-                                {calculateMaintenanceScore(projectsData)}/100
+                                {calculateMaintenanceScore(projectsData)}
                             </Typography>
                         </Paper>
                     </Box>
