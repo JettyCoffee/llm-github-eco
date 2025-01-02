@@ -229,8 +229,8 @@ const Home = () => {
                             fontSize: '1.1rem'
                         }}
                     >
-                        本项目致力于构建一个开源 AI 大模型生态分析与可视化平台。通过深入分析 GitHub 数据，我们提供了全方位的项目评估体系，
-                        包括代码质量评估、社区活跃度分析、项目影响力衡量和维护状况追踪等多个维度。帮助开发者更好地了解和选择 AI 开源项目。
+                        本项目基于 GitHub 和 Hugging Face 两个开源社区的活动数据，构建了一个开源 AI 大模型生态分析与可视化平台。
+                        通过多维度的数据分析和可视化展示，帮助开发者深入了解大模型生态系统的发展动态，为技术选型和生态分析提供有力支持。
                     </Typography>
 
                     {/* 搜索框和下拉列表 */}
@@ -251,7 +251,7 @@ const Home = () => {
                             <Box sx={{ position: 'relative', flex: 1 }}>
                                 <TextField
                                     fullWidth
-                                    placeholder="输入项目名称（例如：microsoft/deepspeed）进行分析"
+                                    placeholder="输入 GitHub 项目名称（例如：langchain-chatchat）进行分析"
                                     value={searchTerm}
                                     onChange={(e) => {
                                         setSearchTerm(e.target.value);
@@ -338,7 +338,7 @@ const Home = () => {
                     </Paper>
                 </Box>
 
-                {/* 功能介绍 */}
+                {/* 平台功能 */}
                 <Box sx={{ py: 8, textAlign: 'center' }}>
                     <Typography 
                         variant="h4" 
@@ -348,7 +348,7 @@ const Home = () => {
                             color: 'text.primary'
                         }}
                     >
-                        评分体系
+                        平台功能
                     </Typography>
                     <Typography 
                         component="div"
@@ -363,42 +363,42 @@ const Home = () => {
                     >
                         <Box component="ul" sx={{ pl: 2 }}>
                             <Box component="li" sx={{ mb: 2 }}>
-                                <strong>代码质量与可维护性：</strong> 
+                                <strong>GitHub 项目分析：</strong>
                                 <ul>
-                                    <li>PR 质量趋势（40%）：分析 PR 接受率变化和当前水平</li>
-                                    <li>代码审查效率（30%）：评估 PR 处理时间和改善趋势</li>
-                                    <li>Issue 解决质量（30%）：衡量问题解决速度和效率提升</li>
+                                    <li>基于 OpenDigger 数据的多维度评分体系</li>
+                                    <li>项目活跃度和影响力可视化分析</li>
+                                    <li>代码质量和社区健康度评估</li>
                                 </ul>
                             </Box>
                             <Box component="li" sx={{ mb: 2 }}>
-                                <strong>社区活跃度与贡献：</strong>
+                                <strong>Hugging Face 模型排行：</strong>
                                 <ul>
-                                    <li>贡献者多样性（40%）：基于 Bus Factor 评估社区健康度</li>
-                                    <li>新贡献者增长（30%）：追踪社区扩张速度和规模</li>
-                                    <li>社区响应活跃度（30%）：分析 Issue 响应时间和改善情况</li>
+                                    <li>大模型影响力排行榜</li>
+                                    <li>多维度筛选和排序功能</li>
+                                    <li>模型详细信息快速查看</li>
                                 </ul>
                             </Box>
                             <Box component="li" sx={{ mb: 2 }}>
-                                <strong>项目影响力与应用：</strong>
+                                <strong>生态网络分析：</strong>
                                 <ul>
-                                    <li>Stars 增长趋势（40%）：评估项目受欢迎程度</li>
-                                    <li>技术影响力趋势（30%）：分析项目在生态中的地位</li>
-                                    <li>Fork 应用情况（30%）：衡量项目的实际应用价值</li>
+                                    <li>模型衍生关系可视化</li>
+                                    <li>多视图切换（Top 100/完整网络/作者分组等）</li>
+                                    <li>互动式网络图探索</li>
                                 </ul>
                             </Box>
                             <Box component="li">
-                                <strong>项目维护与更新：</strong>
+                                <strong>生态数据大屏：</strong>
                                 <ul>
-                                    <li>维护频率趋势（40%）：评估项目活动水平和增长情况</li>
-                                    <li>维护稳定性（30%）：分析活动波动和改善趋势</li>
-                                    <li>维护持续性（30%）：追踪长期维护质量和连续性</li>
+                                    <li>语言支持情况分析</li>
+                                    <li>作者和组织影响力排行</li>
+                                    <li>任务类型分布统计</li>
                                 </ul>
                             </Box>
                         </Box>
                     </Typography>
                 </Box>
 
-                {/* 数据分析与可视化 */}
+                {/* 技术实现 */}
                 <Box sx={{ py: 8, textAlign: 'center' }}>
                     <Typography 
                         variant="h4" 
@@ -408,7 +408,7 @@ const Home = () => {
                             color: 'text.primary'
                         }}
                     >
-                        数据分析与可视化
+                        技术实现
                     </Typography>
                     <Grid container spacing={4} justifyContent="center">
                         <Grid item xs={12} md={4}>
@@ -422,9 +422,14 @@ const Home = () => {
                                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>项目关注度分析</Typography>
+                                <Typography variant="h6" gutterBottom>数据获取与处理</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    追踪 Stars、Attention 等指标的变化趋势，展示项目在社区中的关注度变化
+                                    • OpenDigger 数据集<br/>
+                                    • Hugging Face API<br/>
+                                    • 网页爬虫<br/>
+                                    • Easy Graph 图计算<br/>
+                                    • 数据预处理流水线<br/>
+                                    • 增量数据更新
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -439,62 +444,14 @@ const Home = () => {
                                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>代码变更分析</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    分析代码提交、PR 处理和 Issue 解决等行为，展示项目的开发活动特征
-                                </Typography>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    p: 3,
-                                    height: '100%',
-                                    borderRadius: 2,
-                                    bgcolor: 'background.paper',
-                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                }}
-                            >
-                                <Typography variant="h6" gutterBottom>活跃度追踪</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    监控项目整体活跃度和 OpenRank 变化，反映项目的综合发展状况
-                                </Typography>
-                            </Paper>
-                        </Grid>
-                    </Grid>
-                </Box>
-
-                {/* 技术架构 */}
-                <Box sx={{ py: 8, textAlign: 'center' }}>
-                    <Typography 
-                        variant="h4" 
-                        sx={{ 
-                            mb: 4,
-                            fontWeight: 600,
-                            color: 'text.primary'
-                        }}
-                    >
-                        技术架构
-                    </Typography>
-                    <Grid container spacing={4} justifyContent="center">
-                        <Grid item xs={12} md={4}>
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    p: 3,
-                                    height: '100%',
-                                    borderRadius: 2,
-                                    bgcolor: 'background.paper',
-                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                }}
-                            >
-                                <Typography variant="h6" gutterBottom>前端技术栈</Typography>
+                                <Typography variant="h6" gutterBottom>前端开发</Typography>
                                 <Typography variant="body2" color="text.secondary">
                                     • Next.js 15 + React 19<br/>
                                     • Material-UI 组件库<br/>
                                     • ECharts 数据可视化<br/>
-                                    • Tailwind CSS 样式管理
+                                    • PyVis 网络图<br/>
+                                    • Tailwind CSS<br/>
+                                    • 响应式设计
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -509,39 +466,21 @@ const Home = () => {
                                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>数据处理</Typography>
+                                <Typography variant="h6" gutterBottom>后端服务</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    • OpenDigger 数据源<br/>
-                                    • Python 数据分析<br/>
-                                    • Supabase 数据存储<br/>
-                                    • RESTful API 接口
-                                </Typography>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    p: 3,
-                                    height: '100%',
-                                    borderRadius: 2,
-                                    bgcolor: 'background.paper',
-                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                }}
-                            >
-                                <Typography variant="h6" gutterBottom>部署环境</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    • Vercel 平台部署<br/>
-                                    • GitHub Actions CI/CD<br/>
-                                    • 环境变量配置<br/>
-                                    • 自动化构建部署
+                                    • Flask 框架<br/>
+                                    • 影响力算法<br/>
+                                    • RESTful API<br/>
+                                    • 数据预处理<br/>
+                                    • 缓存优化<br/>
+                                    • 性能监控
                                 </Typography>
                             </Paper>
                         </Grid>
                     </Grid>
                 </Box>
 
-                {/* 开发团队 */}
+                {/* 影响力算法 */}
                 <Box sx={{ py: 8, textAlign: 'center' }}>
                     <Typography 
                         variant="h4" 
@@ -551,7 +490,7 @@ const Home = () => {
                             color: 'text.primary'
                         }}
                     >
-                        开发团队
+                        影响力算法
                     </Typography>
                     <Grid container spacing={4} justifyContent="center">
                         <Grid item xs={12} md={6}>
@@ -565,12 +504,15 @@ const Home = () => {
                                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>@zzsyppt</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    • 评分算法设计与实现<br/>
-                                    • 数据分析模块开发<br/>
-                                    • 可视化图表设计<br/>
-                                    • 前端架构搭建
+                                <Typography variant="h6" gutterBottom>自身影响力计算</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                                    基于以下因素综合计算：<br/>
+                                    • 下载量（对数加权）<br/>
+                                    • 点赞数（线性加权）<br/>
+                                    • Space应用影响力<br/>
+                                    • 时间衰减因子<br/><br/>
+                                    计算公式：<br/>
+                                    I_self = W₁·log(downloads) + W₂·likes + W₃·I_spaces + W₄·e^(-λt)
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -585,12 +527,184 @@ const Home = () => {
                                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>@JettyCoffee</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    • 数据获取与处理<br/>
-                                    • API 接口开发<br/>
-                                    • 前端界面实现<br/>
-                                    • 项目部署维护
+                                <Typography variant="h6" gutterBottom>总影响力计算</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                                    迭代计算三个部分：<br/>
+                                    • 自身影响力（α₁权重）<br/>
+                                    • 子模型影响力（α₂权重）<br/>
+                                    • 父模型影响力（α₃权重）<br/><br/>
+                                    计算公式：<br/>
+                                    I_total = α₁·I_self + α₂·I_child + α₃·I_parent
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </Box>
+
+                {/* 项目架构 */}
+                <Box sx={{ py: 8, textAlign: 'center' }}>
+                    <Typography 
+                        variant="h4" 
+                        sx={{ 
+                            mb: 4,
+                            fontWeight: 600,
+                            color: 'text.primary'
+                        }}
+                    >
+                        项目架构
+                    </Typography>
+                    <Grid container spacing={4} justifyContent="center">
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>数据获取模块</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                                    • 模型元数据获取<br/>
+                                    &nbsp;&nbsp;- 基础信息采集<br/>
+                                    &nbsp;&nbsp;- 下载量统计<br/>
+                                    &nbsp;&nbsp;- 点赞数追踪<br/>
+                                    • 作者信息采集<br/>
+                                    &nbsp;&nbsp;- 个人/组织识别<br/>
+                                    &nbsp;&nbsp;- 影响力评估<br/>
+                                    • 衍生关系分析<br/>
+                                    &nbsp;&nbsp;- Model Tree 构建<br/>
+                                    &nbsp;&nbsp;- 关系类型识别
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>数据处理模块</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                                    • 图数据处理<br/>
+                                    &nbsp;&nbsp;- 节点属性定义<br/>
+                                    &nbsp;&nbsp;- 边关系构建<br/>
+                                    &nbsp;&nbsp;- 图计算优化<br/>
+                                    • 影响力计算<br/>
+                                    &nbsp;&nbsp;- 自身影响力<br/>
+                                    &nbsp;&nbsp;- 关系传播<br/>
+                                    • 数据预处理<br/>
+                                    &nbsp;&nbsp;- 清洗与过滤<br/>
+                                    &nbsp;&nbsp;- 格式标准化
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>可视化模块</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                                    • 排行榜系统<br/>
+                                    &nbsp;&nbsp;- 多维度排序<br/>
+                                    &nbsp;&nbsp;- 实时更新<br/>
+                                    &nbsp;&nbsp;- 筛选功能<br/>
+                                    • 网络关系图<br/>
+                                    &nbsp;&nbsp;- 多视图切换<br/>
+                                    &nbsp;&nbsp;- 交互式探索<br/>
+                                    • 数据大屏<br/>
+                                    &nbsp;&nbsp;- 实时统计<br/>
+                                    &nbsp;&nbsp;- 趋势分析
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </Box>
+
+                {/* 未来规划 */}
+                <Box sx={{ py: 8, textAlign: 'center' }}>
+                    <Typography 
+                        variant="h4" 
+                        sx={{ 
+                            mb: 4,
+                            fontWeight: 600,
+                            color: 'text.primary'
+                        }}
+                    >
+                        未来规划
+                    </Typography>
+                    <Grid container spacing={4} justifyContent="center">
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>数据扩展</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                                    • 扩大数据采集范围<br/>
+                                    • 增加历史数据分析<br/>
+                                    • 引入更多评估维度<br/>
+                                    • 优化数据更新机制
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>功能优化</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                                    • 完善评分算法<br/>
+                                    • 增强可视化效果<br/>
+                                    • 提升用户交互体验<br/>
+                                    • 添加更多分析维度
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    height: '100%',
+                                    borderRadius: 2,
+                                    bgcolor: 'background.paper',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>生态拓展</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                                    • 支持更多开源平台<br/>
+                                    • 深化生态分析<br/>
+                                    • 开放数据接口<br/>
+                                    • 建立开发者社区
                                 </Typography>
                             </Paper>
                         </Grid>
