@@ -11,7 +11,8 @@ const DashboardPage = () => {
 
     useEffect(() => {
         if (!loading && selectedProjects.length === 0) {
-            // 如果没有选择项目，重定向到项目选择页面
+            // 如果没有选择项目，显示提示并重定向到项目选择页面
+            alert('请先选择要分析的项目！');
             router.push('/');
         }
     }, [selectedProjects, loading, router]);
