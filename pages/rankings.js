@@ -5,7 +5,7 @@ export default function Rankings() {
     const router = useRouter();
 
     useEffect(() => {
-        window.location.href = 'https://121.36.246.231:5000/leaderboard/';
+        window.location.href = 'http://121.36.246.231:5000/leaderboard/';
     }, []);
 
     return (
