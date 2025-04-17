@@ -139,7 +139,7 @@ const Header = () => {
                             模型排行榜
                         </Link>
                         <Link
-                            href="http://121.36.246.231:5000/dashboard/"
+                            href="http://101.132.251.146:5000/dashboard/"
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{
