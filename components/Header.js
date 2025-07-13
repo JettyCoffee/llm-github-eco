@@ -46,15 +46,16 @@ const Header = ({ showSearch = false }) => {
                         justifyContent: 'space-between'
                     }}
                 >
-                    {/* 左侧 Logo 和品牌名 */}
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {/* 左侧区域 */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: showSearch ? 1 : 'none' }}>
                         <Link
                             href="/"
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 textDecoration: 'none',
-                                color: 'inherit'
+                                color: 'inherit',
+                                mr: showSearch ? 3 : 0
                             }}
                         >
                             <Box
@@ -82,6 +83,50 @@ const Header = ({ showSearch = false }) => {
                                 Github 大模型生态系统可视化
                             </Typography>
                         </Link>
+                        
+                        {/* 搜索模式下的左侧导航 */}
+                        {showSearch && (
+                            <Box sx={{ display: 'flex', gap: 2, ml: 2 }}>
+                                <Link
+                                    href="/"
+                                    sx={{
+                                        textDecoration: 'none',
+                                        color: 'text.primary',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500,
+                                        py: 1,
+                                        px: 2,
+                                        borderRadius: 1,
+                                        transition: 'all 0.2s',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                            transform: 'translateY(-2px)',
+                                        }
+                                    }}
+                                >
+                                    首页
+                                </Link>
+                                <Link
+                                    href="/overview"
+                                    sx={{
+                                        textDecoration: 'none',
+                                        color: 'text.primary',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500,
+                                        py: 1,
+                                        px: 2,
+                                        borderRadius: 1,
+                                        transition: 'all 0.2s',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                            transform: 'translateY(-2px)',
+                                        }
+                                    }}
+                                >
+                                    项目总览
+                                </Link>
+                            </Box>
+                        )}
                     </Box>
 
                     {/* 中间区域 - 搜索控件或导航菜单 */}
@@ -89,10 +134,8 @@ const Header = ({ showSearch = false }) => {
                         sx={{ 
                             display: 'flex', 
                             alignItems: 'center',
-                            gap: 2,
-                            flex: 1,
                             justifyContent: 'center',
-                            mx: 2
+                            flex: showSearch ? 1 : 'none'
                         }}
                     >
                         {showSearch ? (
@@ -112,7 +155,10 @@ const Header = ({ showSearch = false }) => {
                                 sx={{ 
                                     display: 'flex', 
                                     gap: { xs: 2, md: 4 },
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+                                    position: 'absolute',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)'
                                 }}
                             >
                                 <Link
@@ -157,8 +203,52 @@ const Header = ({ showSearch = false }) => {
                         )}
                     </Box>
 
-                    {/* 右侧工具栏 */}
-                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    {/* 右侧区域 */}
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flex: showSearch ? 1 : 'none', justifyContent: 'flex-end' }}>
+                        {/* 搜索模式下的右侧导航 */}
+                        {showSearch && (
+                            <Box sx={{ display: 'flex', gap: 2, mr: 2 }}>
+                                <Link
+                                    href="/analytics"
+                                    sx={{
+                                        textDecoration: 'none',
+                                        color: 'text.primary',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500,
+                                        py: 1,
+                                        px: 2,
+                                        borderRadius: 1,
+                                        transition: 'all 0.2s',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                            transform: 'translateY(-2px)',
+                                        }
+                                    }}
+                                >
+                                    数据分析
+                                </Link>
+                                <Link
+                                    href="/charts"
+                                    sx={{
+                                        textDecoration: 'none',
+                                        color: 'text.primary',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500,
+                                        py: 1,
+                                        px: 2,
+                                        borderRadius: 1,
+                                        transition: 'all 0.2s',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                            transform: 'translateY(-2px)',
+                                        }
+                                    }}
+                                >
+                                    图表中心
+                                </Link>
+                            </Box>
+                        )}
+                        
                         <IconButton 
                             size="small"
                             sx={{

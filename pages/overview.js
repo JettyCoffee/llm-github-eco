@@ -13,7 +13,9 @@ import {
     CardContent,
     CardActions,
     Fade,
-    Divider
+    Divider,
+    TextField,
+    InputAdornment
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
@@ -23,50 +25,64 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import StarIcon from '@mui/icons-material/Star';
 import ForkLeftIcon from '@mui/icons-material/ForkLeft';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import SearchIcon from '@mui/icons-material/Search';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import useDebounce from '../hooks/useDebounce';
 
 const Overview = () => {
-    const [selectedLetter, setSelectedLetter] = useState('A');
+    const [searchTerm, setSearchTerm] = useState('');
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [projectsData, setProjectsData] = useState({});
+    const [initialLoad, setInitialLoad] = useState(true);
+    const debouncedSearchTerm = useDebounce(searchTerm, 300);
     const router = useRouter();
 
-    // 字母按钮列表
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-    // 获取指定字母开头的项目
-    const fetchProjectsByLetter = async (letter) => {
+    // 获取项目数据（带缓存）
+    const fetchProjectsWithCache = async (query = '', limit = 8) => {
         setLoading(true);
         setError(null);
         
         try {
-            const response = await fetch(`/api/projects/search?q=${letter}&limit=50`);
+            const response = await fetch(`/api/projects/search?q=${encodeURIComponent(query)}&limit=${limit}`);
             if (!response.ok) throw new Error('Failed to fetch projects');
             
             const data = await response.json();
             
-            // 过滤出以指定字母开头的项目
-            const filteredProjects = data.filter(project => {
-                const firstLetter = project.full_name.charAt(0).toUpperCase();
-                return firstLetter === letter;
-            });
+            // 如果是初始加载，随机选择8个项目
+            let filteredProjects = data;
+            if (initialLoad && query === '') {
+                // 随机打乱数组并选择前8个
+                filteredProjects = data.sort(() => Math.random() - 0.5).slice(0, 8);
+            } else if (query) {
+                // 搜索模式：按项目名称过滤
+                filteredProjects = data.filter(project => {
+                    const searchLower = query.toLowerCase();
+                    return project.full_name.toLowerCase().includes(searchLower) ||
+                           project.repo_name.toLowerCase().includes(searchLower) ||
+                           project.org_name.toLowerCase().includes(searchLower);
+                });
+            }
             
             setProjects(filteredProjects);
             
-            // 为每个项目获取详细数据
+            // 为每个项目获取缓存的GitHub数据
             const projectDetails = {};
-            for (const project of filteredProjects.slice(0, 20)) { // 限制为前20个项目
+            for (const project of filteredProjects.slice(0, 20)) {
                 try {
-                    const metrics = await DataService.getProjectMetrics(project.full_name);
-                    projectDetails[project.full_name] = metrics;
+                    const cachedData = await fetchCachedGitHubData(project.full_name);
+                    projectDetails[project.full_name] = cachedData;
                 } catch (error) {
-                    console.error(`Error fetching metrics for ${project.full_name}:`, error);
+                    console.error(`Error fetching cached data for ${project.full_name}:`, error);
                     projectDetails[project.full_name] = null;
                 }
             }
             
             setProjectsData(projectDetails);
+            if (initialLoad) {
+                setInitialLoad(false);
+            }
         } catch (error) {
             console.error('Error fetching projects:', error);
             setError('加载项目数据时出错，请重试');
@@ -75,10 +91,59 @@ const Overview = () => {
         }
     };
 
+    // 获取缓存的GitHub数据
+    const fetchCachedGitHubData = async (projectName) => {
+        try {
+            const response = await fetch(`/api/github-cache?project=${encodeURIComponent(projectName)}`);
+            if (!response.ok) {
+                // 如果没有缓存数据，从原始数据服务获取
+                return await DataService.getProjectMetrics(projectName);
+            }
+            const cachedData = await response.json();
+            
+            // 检查数据是否过期（超过1天）
+            const lastUpdated = new Date(cachedData.last_updated);
+            const now = new Date();
+            const oneDay = 24 * 60 * 60 * 1000;
+            
+            if (now - lastUpdated > oneDay) {
+                // 数据过期，重新获取
+                const freshData = await DataService.getProjectMetrics(projectName);
+                
+                // 更新缓存
+                await fetch('/api/github-cache', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        project: projectName,
+                        data: freshData
+                    })
+                });
+                
+                return freshData;
+            }
+            
+            return cachedData.data;
+        } catch (error) {
+            console.error('Error fetching cached GitHub data:', error);
+            // 回退到原始数据服务
+            return await DataService.getProjectMetrics(projectName);
+        }
+    };
+
     // 初始加载
     useEffect(() => {
-        fetchProjectsByLetter(selectedLetter);
-    }, [selectedLetter]);
+        fetchProjectsWithCache();
+    }, []);
+
+    // 搜索功能
+    useEffect(() => {
+        if (!initialLoad) {
+            fetchProjectsWithCache(debouncedSearchTerm, debouncedSearchTerm ? 50 : 8);
+        }
+    }, [debouncedSearchTerm]);
 
     // 计算项目的简单评分
     const calculateSimpleScore = (metrics) => {
@@ -139,6 +204,13 @@ const Overview = () => {
         return stats;
     };
 
+    // 刷新数据
+    const handleRefresh = () => {
+        setSearchTerm('');
+        setInitialLoad(true);
+        fetchProjectsWithCache();
+    };
+
     return (
         <>
             <Header />
@@ -160,11 +232,11 @@ const Overview = () => {
                             项目总览
                         </Typography>
                         <Typography variant="h6" color="text.secondary">
-                            按字母顺序浏览 GitHub 大模型生态系统中的项目
+                            探索 GitHub 大模型生态系统中的精选项目
                         </Typography>
                     </Box>
 
-                    {/* 字母导航 */}
+                    {/* 搜索和刷新控件 */}
                     <Paper 
                         elevation={0} 
                         sx={{ 
@@ -175,48 +247,56 @@ const Overview = () => {
                             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                         }}
                     >
-                        <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-                            按首字母筛选
-                        </Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                            {alphabet.map((letter) => (
-                                <Button
-                                    key={letter}
-                                    variant={selectedLetter === letter ? 'contained' : 'outlined'}
-                                    size="small"
-                                    onClick={() => setSelectedLetter(letter)}
-                                    sx={{
-                                        minWidth: '40px',
-                                        height: '40px',
-                                        borderRadius: 1,
-                                        ...(selectedLetter === letter && {
-                                            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                                            '&:hover': {
-                                                background: 'linear-gradient(45deg, #1976D2 30%, #21CBF3 90%)',
-                                            }
-                                        })
-                                    }}
-                                >
-                                    {letter}
-                                </Button>
-                            ))}
+                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
+                            <TextField
+                                fullWidth
+                                placeholder="搜索项目名称..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                variant="outlined"
+                                size="small"
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon sx={{ color: 'text.secondary' }} />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: 2,
+                                        bgcolor: '#f8f9fa'
+                                    }
+                                }}
+                            />
+                            <Button
+                                variant="outlined"
+                                onClick={handleRefresh}
+                                startIcon={<RefreshIcon />}
+                                disabled={loading}
+                                sx={{
+                                    minWidth: '120px',
+                                    borderRadius: 2,
+                                }}
+                            >
+                                刷新
+                            </Button>
                         </Box>
+                        
+                        <Typography variant="body2" color="text.secondary">
+                            {searchTerm 
+                                ? `搜索结果: ${projects.length} 个项目`
+                                : `随机展示: ${projects.length} 个项目`
+                            }
+                        </Typography>
                     </Paper>
 
-                    {/* 项目统计信息 */}
-                    <Box sx={{ mb: 4 }}>
-                        <Typography variant="h6" gutterBottom>
-                            "{selectedLetter}" 开头的项目 ({projects.length} 个)
-                        </Typography>
-                        {loading && (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <CircularProgress size={20} />
-                                <Typography variant="body2" color="text.secondary">
-                                    正在加载项目数据...
-                                </Typography>
-                            </Box>
-                        )}
-                    </Box>
+                    {/* 加载状态 */}
+                    {loading && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                            <CircularProgress />
+                        </Box>
+                    )}
 
                     {/* 错误提示 */}
                     {error && (
@@ -348,10 +428,10 @@ const Overview = () => {
                             }}
                         >
                             <Typography variant="h6" color="text.secondary" gutterBottom>
-                                暂无以 "{selectedLetter}" 开头的项目
+                                {searchTerm ? '未找到匹配的项目' : '暂无项目数据'}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                请选择其他字母查看更多项目
+                                {searchTerm ? '请尝试其他搜索关键词' : '点击刷新按钮重新加载'}
                             </Typography>
                         </Paper>
                     )}

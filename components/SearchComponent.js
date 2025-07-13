@@ -157,7 +157,17 @@ const SearchComponent = ({
                 maxWidth: compact ? '400px' : '100%'
             }}
         >
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+            <Box sx={{ 
+                display: 'flex', 
+                gap: compact ? 1 : 2, 
+                alignItems: 'center',
+                borderRadius: compact ? 1 : 2,
+                ...(compact && {
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    overflow: 'hidden'
+                })
+            }}>
                 <Box sx={{ position: 'relative', flex: 1 }}>
                     <TextField
                         fullWidth
@@ -172,9 +182,22 @@ const SearchComponent = ({
                         size={compact ? "small" : "medium"}
                         sx={{
                             '& .MuiOutlinedInput-root': {
-                                borderRadius: compact ? 1 : 2,
+                                borderRadius: compact ? 0 : 2,
                                 bgcolor: backgroundColor,
-                                fontSize: compact ? '0.875rem' : '1rem'
+                                fontSize: compact ? '0.875rem' : '1rem',
+                                height: compact ? '40px' : 'auto',
+                                ...(compact && {
+                                    border: 'none',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none'
+                                    },
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none'
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none'
+                                    }
+                                })
                             }
                         }}
                     />
@@ -234,9 +257,10 @@ const SearchComponent = ({
                         disabled={!selectedProject}
                         sx={{
                             minWidth: compact ? '80px' : '120px',
-                            borderRadius: compact ? 1 : 2,
+                            height: compact ? '40px' : 'auto',
+                            borderRadius: compact ? 0 : 2,
                             background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                            boxShadow: '0 3px 5px 2px rgba(33, 150, 243, .3)',
+                            boxShadow: compact ? 'none' : '0 3px 5px 2px rgba(33, 150, 243, .3)',
                             '&:hover': {
                                 background: 'linear-gradient(45deg, #1976D2 30%, #21CBF3 90%)',
                             },

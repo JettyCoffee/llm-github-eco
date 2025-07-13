@@ -113,10 +113,14 @@ const Home = () => {
                             >
                                 <Box
                                     component="img"
-                                    src="/Project-LLM-Github-Eco-2196F3.svg"
-                                    alt="Project LLM Github Eco"
+                                    src="/Project-LLM-Eco-Viz-2196F3.svg"
+                                    alt="Project LLM Eco Viz"
                                     sx={{ 
-                                        height: '20px'
+                                        height: '20px',
+                                        filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.1))'
+                                    }}
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
                                     }}
                                 />
                             </Link>
