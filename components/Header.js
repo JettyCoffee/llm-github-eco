@@ -80,7 +80,7 @@ const Header = ({ showSearch = false }) => {
                                     display: { xs: 'none', sm: 'block' }
                                 }}
                             >
-                                Github 大模型生态系统可视化
+                                GitHub 大模型生态系统可视化
                             </Typography>
                         </Link>
                         
@@ -282,7 +282,7 @@ const Header = ({ showSearch = false }) => {
                                     display: { xs: 'none', md: 'block' }
                                 }}
                             >
-                                网站项目地址
+                                项目GitHub地址
                             </Typography>
                         </Box>
                     </Box>

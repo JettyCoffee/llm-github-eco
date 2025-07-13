@@ -75,7 +75,7 @@ const Home = () => {
                                 mb: 2
                             }}
                         >
-                            Github 大模型生态系统可视化
+                            GitHub 大模型生态系统可视化
                         </Typography>
 
                         {/* 副标题 */}
@@ -113,7 +113,7 @@ const Home = () => {
                             >
                                 <Box
                                     component="img"
-                                    src="/Project-LLM-Eco-Viz-2196F3.svg"
+                                    src="https://img.shields.io/badge/Project-LLM_GitHub_Eco-blue"
                                     alt="Project LLM Eco Viz"
                                     sx={{ 
                                         height: '20px',
