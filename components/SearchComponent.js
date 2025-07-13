@@ -182,12 +182,22 @@ const SearchComponent = ({
                         size={compact ? "small" : "medium"}
                         sx={{
                             '& .MuiOutlinedInput-root': {
-                                borderRadius: compact ? 0 : 2,
+                                borderRadius: compact ? 0 : 3,
                                 bgcolor: backgroundColor,
                                 fontSize: compact ? '0.875rem' : '1rem',
                                 height: compact ? '40px' : 'auto',
+                                fontWeight: 500,
+                                border: compact ? 'none' : '1px solid rgba(0, 0, 0, 0.1)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    borderColor: compact ? 'transparent' : 'rgba(0, 122, 255, 0.3)',
+                                    boxShadow: compact ? 'none' : '0 0 0 3px rgba(0, 122, 255, 0.1)'
+                                },
+                                '&.Mui-focused': {
+                                    borderColor: compact ? 'transparent' : '#007AFF',
+                                    boxShadow: compact ? 'none' : '0 0 0 3px rgba(0, 122, 255, 0.2)'
+                                },
                                 ...(compact && {
-                                    border: 'none',
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         border: 'none'
                                     },
@@ -197,7 +207,14 @@ const SearchComponent = ({
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                         border: 'none'
                                     }
-                                })
+                                }),
+                                '& .MuiInputBase-input': {
+                                    fontWeight: 500,
+                                    '&::placeholder': {
+                                        color: 'rgba(0, 0, 0, 0.5)',
+                                        fontWeight: 400
+                                    }
+                                }
                             }
                         }}
                     />
@@ -258,14 +275,25 @@ const SearchComponent = ({
                         sx={{
                             minWidth: compact ? '80px' : '120px',
                             height: compact ? '40px' : 'auto',
-                            borderRadius: compact ? 0 : 2,
-                            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                            boxShadow: compact ? 'none' : '0 3px 5px 2px rgba(33, 150, 243, .3)',
+                            borderRadius: compact ? 0 : 3,
+                            background: 'linear-gradient(135deg, #007AFF 0%, #5856D6 100%)',
+                            boxShadow: compact ? 'none' : '0 4px 12px rgba(0, 122, 255, 0.3)',
+                            fontSize: compact ? '0.875rem' : '1rem',
+                            fontWeight: 600,
+                            textTransform: 'none',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             '&:hover': {
-                                background: 'linear-gradient(45deg, #1976D2 30%, #21CBF3 90%)',
+                                background: 'linear-gradient(135deg, #0056CC 0%, #4A44B8 100%)',
+                                transform: compact ? 'none' : 'translateY(-1px)',
+                                boxShadow: compact ? 'none' : '0 8px 16px rgba(0, 122, 255, 0.4)'
+                            },
+                            '&:active': {
+                                transform: compact ? 'none' : 'translateY(0px)',
+                                boxShadow: compact ? 'none' : '0 2px 8px rgba(0, 122, 255, 0.3)'
                             },
                             '&.Mui-disabled': {
-                                background: 'rgba(0, 0, 0, 0.12)'
+                                background: 'rgba(0, 0, 0, 0.08)',
+                                color: 'rgba(0, 0, 0, 0.3)'
                             }
                         }}
                     >

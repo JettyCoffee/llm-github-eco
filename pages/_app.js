@@ -24,8 +24,8 @@ function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }) 
     return (
         <CacheProvider value={emotionCache}>
             <Head>
-                <title>LLM Eco Visual</title>
-                <link rel="icon" href="/header-logo.png" />
+                <title>GitHub LLM Eco</title>
+                <link rel="icon" href="/githubcopilot.svg" />
                 <meta name="viewport" content="initial-scale=1, width=device-width" />
             </Head>
             <ProjectProvider>

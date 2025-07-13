@@ -14,10 +14,10 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content={theme.palette.primary.main} />
           <link rel="shortcut icon" href="/favicon.ico" />
           <meta name="emotion-insertion-point" content="" />
-          <link rel="icon" href="/header-logo.png" />
-          <link rel="shortcut icon" href="/header-logo.png" />
-          <link rel="apple-touch-icon" href="/header-logo.png" />
-          <meta name="description" content="LLM生态系统可视化分析平台" />
+          <link rel="icon" href="/githubcopilot.svg" />
+          <link rel="shortcut icon" href="/githubcopilot.svg" />
+          <link rel="apple-touch-icon" href="/githubcopilot.svg" />
+          <meta name="description" content="GitHub大模型生态系统可视化分析平台" />
           {this.props.emotionStyleTags}
         </Head>
         <body>

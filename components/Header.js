@@ -8,7 +8,8 @@ import {
     Container,
     Typography,
     Link,
-    Fade
+    Fade,
+    Collapse
 } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -34,7 +35,8 @@ const Header = ({ showSearch = false }) => {
             sx={{
                 borderBottom: '1px solid',
                 borderColor: 'divider',
-                bgcolor: 'background.paper',
+                bgcolor: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
                 zIndex: (theme) => theme.zIndex.drawer + 1,
             }}
         >
@@ -42,25 +44,32 @@ const Header = ({ showSearch = false }) => {
                 <Toolbar 
                     disableGutters 
                     sx={{ 
-                        minHeight: '56px',
-                        justifyContent: 'space-between'
+                        minHeight: '64px',
+                        position: 'relative'
                     }}
                 >
-                    {/* 左侧区域 */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', flex: showSearch ? 1 : 'none' }}>
+                    {/* Logo和品牌名 - 始终在左侧 */}
+                    <Box 
+                        sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transform: showSearch ? 'translateX(0)' : 'translateX(0)',
+                            zIndex: 2
+                        }}
+                    >
                         <Link
                             href="/"
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 textDecoration: 'none',
-                                color: 'inherit',
-                                mr: showSearch ? 3 : 0
+                                color: 'inherit'
                             }}
                         >
                             <Box
                                 component="img"
-                                src="/header-logo.png"
+                                src="/githubcopilot.svg"
                                 alt="Logo"
                                 sx={{
                                     width: 32,
@@ -72,188 +81,157 @@ const Header = ({ showSearch = false }) => {
                             <Typography
                                 variant="h6"
                                 sx={{
-                                    fontSize: { xs: '1rem', sm: '1.125rem' },
-                                    fontWeight: 500,
-                                    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.125rem' },
+                                    fontWeight: 600,
+                                    background: 'linear-gradient(45deg, #007AFF 30%, #5856D6 90%)',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
-                                    display: { xs: 'none', sm: 'block' }
+                                    display: { xs: 'none', sm: showSearch ? 'none' : 'block', md: 'block' },
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                                 }}
                             >
                                 GitHub 大模型生态系统可视化
                             </Typography>
                         </Link>
-                        
-                        {/* 搜索模式下的左侧导航 */}
-                        {showSearch && (
-                            <Box sx={{ display: 'flex', gap: 2, ml: 2 }}>
-                                <Link
-                                    href="/"
-                                    sx={{
-                                        textDecoration: 'none',
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        py: 1,
-                                        px: 2,
-                                        borderRadius: 1,
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }}
-                                >
-                                    首页
-                                </Link>
-                                <Link
-                                    href="/overview"
-                                    sx={{
-                                        textDecoration: 'none',
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        py: 1,
-                                        px: 2,
-                                        borderRadius: 1,
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }}
-                                >
-                                    项目总览
-                                </Link>
-                            </Box>
-                        )}
                     </Box>
 
-                    {/* 中间区域 - 搜索控件或导航菜单 */}
+                    {/* 中央导航菜单 */}
+                    <Box 
+                        sx={{ 
+                            position: 'absolute',
+                            left: '50%',
+                            top: '50%',
+                            transform: showSearch 
+                                ? 'translate(-50%, -50%) scale(0.8) translateX(-80px)' 
+                                : 'translate(-50%, -50%) scale(1)',
+                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            opacity: showSearch ? 0.7 : 1,
+                            display: 'flex',
+                            gap: { xs: 1, md: 3 },
+                            alignItems: 'center',
+                            zIndex: showSearch ? 1 : 2
+                        }}
+                    >
+                        <Link
+                            href="/"
+                            sx={{
+                                textDecoration: 'none',
+                                color: 'text.primary',
+                                fontSize: { xs: '0.75rem', md: '0.875rem' },
+                                fontWeight: 500,
+                                py: 1,
+                                px: { xs: 1, md: 2 },
+                                borderRadius: 2,
+                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                                    transform: 'translateY(-1px)',
+                                }
+                            }}
+                        >
+                            首页
+                        </Link>
+                        <Link
+                            href="/overview"
+                            sx={{
+                                textDecoration: 'none',
+                                color: 'text.primary',
+                                fontSize: { xs: '0.75rem', md: '0.875rem' },
+                                fontWeight: 500,
+                                py: 1,
+                                px: { xs: 1, md: 2 },
+                                borderRadius: 2,
+                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                                    transform: 'translateY(-1px)',
+                                }
+                            }}
+                        >
+                            项目总览
+                        </Link>
+                        <Link
+                            href="/analytics"
+                            sx={{
+                                textDecoration: 'none',
+                                color: 'text.primary',
+                                fontSize: { xs: '0.75rem', md: '0.875rem' },
+                                fontWeight: 500,
+                                py: 1,
+                                px: { xs: 1, md: 2 },
+                                borderRadius: 2,
+                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                                    transform: 'translateY(-1px)',
+                                }
+                            }}
+                        >
+                            数据分析
+                        </Link>
+                        <Link
+                            href="/charts"
+                            sx={{
+                                textDecoration: 'none',
+                                color: 'text.primary',
+                                fontSize: { xs: '0.75rem', md: '0.875rem' },
+                                fontWeight: 500,
+                                py: 1,
+                                px: { xs: 1, md: 2 },
+                                borderRadius: 2,
+                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                                    transform: 'translateY(-1px)',
+                                }
+                            }}
+                        >
+                            图表中心
+                        </Link>
+                    </Box>
+
+                    {/* 搜索框 - 从右侧滑入 */}
+                    <Box 
+                        sx={{ 
+                            position: 'absolute',
+                            right: showSearch ? '120px' : '-400px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            width: '300px',
+                            zIndex: 3
+                        }}
+                    >
+                        <SearchComponent 
+                            compact={true}
+                            showAnalyzeButton={true}
+                            onProjectSelect={handleProjectSelect}
+                            placeholder="搜索项目..."
+                            backgroundColor="rgba(0, 122, 255, 0.1)"
+                        />
+                    </Box>
+
+                    {/* 右侧工具栏 */}
                     <Box 
                         sx={{ 
                             display: 'flex', 
+                            gap: 1, 
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            flex: showSearch ? 1 : 'none'
+                            marginLeft: 'auto',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            zIndex: 2
                         }}
                     >
-                        {showSearch ? (
-                            <Fade in={showSearch}>
-                                <Box sx={{ maxWidth: '400px', width: '100%' }}>
-                                    <SearchComponent 
-                                        compact={true}
-                                        showAnalyzeButton={true}
-                                        onProjectSelect={handleProjectSelect}
-                                        placeholder="搜索项目..."
-                                        backgroundColor="rgba(0, 0, 0, 0.04)"
-                                    />
-                                </Box>
-                            </Fade>
-                        ) : (
-                            <Box 
-                                sx={{ 
-                                    display: 'flex', 
-                                    gap: { xs: 2, md: 4 },
-                                    alignItems: 'center',
-                                    position: 'absolute',
-                                    left: '50%',
-                                    transform: 'translateX(-50%)'
-                                }}
-                            >
-                                <Link
-                                    href="/"
-                                    sx={{
-                                        textDecoration: 'none',
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        py: 1,
-                                        px: 2,
-                                        borderRadius: 1,
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }}
-                                >
-                                    首页
-                                </Link>
-                                <Link
-                                    href="/overview"
-                                    sx={{
-                                        textDecoration: 'none',
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        py: 1,
-                                        px: 2,
-                                        borderRadius: 1,
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }}
-                                >
-                                    项目总览
-                                </Link>
-                            </Box>
-                        )}
-                    </Box>
-
-                    {/* 右侧区域 */}
-                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flex: showSearch ? 1 : 'none', justifyContent: 'flex-end' }}>
-                        {/* 搜索模式下的右侧导航 */}
-                        {showSearch && (
-                            <Box sx={{ display: 'flex', gap: 2, mr: 2 }}>
-                                <Link
-                                    href="/analytics"
-                                    sx={{
-                                        textDecoration: 'none',
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        py: 1,
-                                        px: 2,
-                                        borderRadius: 1,
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }}
-                                >
-                                    数据分析
-                                </Link>
-                                <Link
-                                    href="/charts"
-                                    sx={{
-                                        textDecoration: 'none',
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        py: 1,
-                                        px: 2,
-                                        borderRadius: 1,
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }}
-                                >
-                                    图表中心
-                                </Link>
-                            </Box>
-                        )}
-                        
                         <IconButton 
                             size="small"
                             sx={{
                                 color: 'text.primary',
-                                '&:hover': { color: 'primary.main' }
+                                borderRadius: 2,
+                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': { 
+                                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                                    transform: 'scale(1.05)'
+                                }
                             }}
                         >
                             <DarkModeIcon sx={{ fontSize: 20 }} />
@@ -270,8 +248,14 @@ const Header = ({ showSearch = false }) => {
                                 gap: 0.5,
                                 color: 'text.primary',
                                 textDecoration: 'none',
-                                '&:hover': { color: 'primary.main' },
-                                transition: 'color 0.3s ease'
+                                borderRadius: 2,
+                                px: 1,
+                                py: 0.5,
+                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': { 
+                                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                                    transform: 'translateY(-1px)'
+                                }
                             }}
                         >
                             <GitHubIcon sx={{ fontSize: 20 }} />

@@ -48,14 +48,46 @@ const Home = () => {
             <Box 
                 sx={{ 
                     minHeight: '100vh',
+                    position: 'relative',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     pt: '64px',
-                    bgcolor: '#f8f9fa'
+                    // 背景图片设置
+                    backgroundImage: 'url(/back.jpg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundAttachment: 'fixed',
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        // 高斯模糊和遮罩效果
+                        backdropFilter: 'blur(30px) saturate(180%)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        zIndex: 1
+                    },
+                    '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: `
+                            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                            radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%)
+                        `,
+                        zIndex: 2
+                    }
                 }}
             >
-                <Container maxWidth="md">
+                <Container maxWidth="md" sx={{ position: 'relative', zIndex: 3 }}>
                     <Box 
                         sx={{ 
                             textAlign: 'center',
@@ -67,12 +99,14 @@ const Home = () => {
                             variant="h2" 
                             component="h1"
                             sx={{ 
-                                fontWeight: 600,
-                                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                fontWeight: 700,
+                                background: 'linear-gradient(45deg, #007AFF 30%, #5856D6 90%)',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
-                                textShadow: '0 0 20px rgba(33, 150, 243, 0.1)',
-                                mb: 2
+                                textShadow: '0 0 30px rgba(0, 122, 255, 0.3)',
+                                mb: 2,
+                                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                                letterSpacing: '-0.02em'
                             }}
                         >
                             GitHub 大模型生态系统可视化
@@ -86,8 +120,10 @@ const Home = () => {
                                 rel="noopener noreferrer"
                                 sx={{
                                     display: 'inline-block',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     '&:hover': {
-                                        opacity: 0.8
+                                        transform: 'scale(1.05)',
+                                        filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))'
                                     }
                                 }}
                             >
@@ -96,7 +132,8 @@ const Home = () => {
                                     src="/Data-OpenDigger-2097FF.svg"
                                     alt="Data OpenDigger"
                                     sx={{ 
-                                        height: '20px'
+                                        height: '24px',
+                                        filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))'
                                     }}
                                 />
                             </Link>
@@ -106,8 +143,10 @@ const Home = () => {
                                 rel="noopener noreferrer"
                                 sx={{
                                     display: 'inline-block',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     '&:hover': {
-                                        opacity: 0.8
+                                        transform: 'scale(1.05)',
+                                        filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))'
                                     }
                                 }}
                             >
@@ -116,8 +155,8 @@ const Home = () => {
                                     src="https://img.shields.io/badge/Project-LLM_GitHub_Eco-blue"
                                     alt="Project LLM Eco Viz"
                                     sx={{ 
-                                        height: '20px',
-                                        filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.1))'
+                                        height: '24px',
+                                        filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))'
                                     }}
                                     onError={(e) => {
                                         e.target.style.display = 'none';
@@ -131,11 +170,13 @@ const Home = () => {
                             variant="body1"
                             sx={{ 
                                 mb: 6,
-                                color: 'text.secondary',
+                                color: 'rgba(0, 0, 0, 0.8)',
                                 maxWidth: '800px',
                                 mx: 'auto',
                                 lineHeight: 1.8,
-                                fontSize: '1.1rem'
+                                fontSize: '1.1rem',
+                                fontWeight: 400,
+                                textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)'
                             }}
                         >
                             本平台依托 GitHub 丰富的开源数据，打造业界领先的 AI 大模型生态系统分析与可视化工具。我们通过多维度、全方位的数据挖掘与智能可视化，助力开发者、研究者和企业洞察大模型生态的最新趋势与核心竞争力。无论是技术选型、生态评估还是创新决策，这里都能为您提供权威、直观、深入的分析支持，助力把握 AI 时代的每一次机遇！
@@ -146,13 +187,28 @@ const Home = () => {
                             elevation={0}
                             ref={searchRef}
                             sx={{
-                                p: 3,
+                                p: 4,
                                 maxWidth: '800px',
                                 mx: 'auto',
-                                borderRadius: 5,
-                                bgcolor: 'background.paper',
-                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                position: 'relative'
+                                borderRadius: 4,
+                                bgcolor: 'rgba(255, 255, 255, 0.95)',
+                                backdropFilter: 'blur(40px) saturate(180%)',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                boxShadow: `
+                                    0 8px 32px rgba(0, 0, 0, 0.12),
+                                    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+                                    0 -1px 0 rgba(0, 0, 0, 0.05) inset
+                                `,
+                                position: 'relative',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: `
+                                        0 16px 48px rgba(0, 0, 0, 0.15),
+                                        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+                                        0 -1px 0 rgba(0, 0, 0, 0.05) inset
+                                    `
+                                }
                             }}
                         >
                             <SearchComponent 
@@ -160,85 +216,297 @@ const Home = () => {
                                 showAnalyzeButton={true}
                                 onProjectSelect={handleProjectSelect}
                                 placeholder="输入 GitHub 项目名称（例如：langchain-chatchat）进行分析"
-                                backgroundColor="#f8f9fa"
+                                backgroundColor="rgba(0, 122, 255, 0.08)"
                             />
                         </Paper>
                     </Box>
                     
-                    {/* 使用指南 */}
+                    {/* 功能导航 */}
                     <Box sx={{ py: 8, textAlign: 'center' }}>
                         <Typography 
                             variant="h4" 
                             sx={{ 
                                 mb: 6,
                                 fontWeight: 600,
-                                color: 'text.primary'
+                                color: 'rgba(0, 0, 0, 0.9)',
+                                textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
+                                fontSize: { xs: '1.8rem', sm: '2rem', md: '2.5rem' }
                             }}
                         >
-                            使用指南
+                            探索功能
                         </Typography>
                         <Grid container spacing={4} justifyContent="center">
-                            {/* GitHub项目分析 */}
-                            <Grid item xs={12} md={12}>
+                            {/* 项目总览 */}
+                            <Grid item xs={12} sm={6} md={3}>
                                 <Paper
                                     elevation={0}
+                                    onClick={() => router.push('/overview')}
                                     sx={{
                                         p: 4,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                        height: 220,
+                                        borderRadius: 3,
+                                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(40px) saturate(180%)',
+                                        border: '1px solid rgba(0, 122, 255, 0.15)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&:hover': {
+                                            transform: 'translateY(-12px) scale(1.03)',
+                                            boxShadow: '0 25px 50px rgba(0, 122, 255, 0.25)',
+                                            bgcolor: 'rgba(0, 122, 255, 0.03)',
+                                            '&::before': {
+                                                opacity: 1
+                                            }
+                                        },
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            background: 'linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.1) 100%)',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease'
+                                        }
                                     }}
                                 >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                        <GitHubIcon sx={{ fontSize: 28, mr: 2, color: 'text.primary' }} />
-                                        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                                            项目分析功能
-                                        </Typography>
+                                    <Box
+                                        sx={{
+                                            width: 72,
+                                            height: 72,
+                                            borderRadius: 4,
+                                            background: 'linear-gradient(135deg, #007AFF 0%, #5856D6 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            mb: 3,
+                                            boxShadow: '0 12px 24px rgba(0, 122, 255, 0.35)',
+                                            position: 'relative',
+                                            zIndex: 1
+                                        }}
+                                    >
+                                        <GitHubIcon sx={{ fontSize: 32, color: 'white' }} />
                                     </Box>
-                                    <Box sx={{ textAlign: 'left' }}>
-                                        <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                            1. 项目搜索与选择
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
-                                            • 智能搜索：在搜索框输入GitHub项目名称，系统支持模糊匹配<br/>
-                                            • 快速选择：从下拉列表选择目标项目，支持键盘导航<br/>
-                                            • 一键分析：点击"分析"按钮即可开始深度分析
-                                        </Typography>
+                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, position: 'relative', zIndex: 1 }}>
+                                        项目总览
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                                        GitHub LLM生态系统中的精选项目
+                                    </Typography>
+                                </Paper>
+                            </Grid>
 
-                                        <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                            2. 多维度评分分析
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
-                                            • 代码质量评分：基于PR质量、代码审查效率、Issue解决效果<br/>
-                                            • 社区活跃度：评估贡献者多样性、新贡献者增长、响应速度<br/>
-                                            • 项目影响力：分析Stars增长、技术关注度、Fork应用情况<br/>
-                                            • 维护指数：综合评估项目的长期维护能力
-                                        </Typography>
-
-                                        <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                            3. 可视化数据展示
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
-                                            • 时序图表：展示项目各项指标的历史变化趋势<br/>
-                                            • 交互式探索：支持缩放、筛选、导出等功能<br/>
-                                            • 对比分析：多项目数据对比，洞察竞争优势
-                                        </Typography>
-
-                                        <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                            4. 项目详情信息
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary" sx={{ pl: 2 }}>
-                                            • 基础信息：项目简介、开发语言、许可证信息<br/>
-                                            • 团队信息：核心贡献者、组织背景、社区规模<br/>
-                                            • 技术栈：依赖关系、架构分析、技术选型<br/>
-                                            • 生态影响：衍生项目、应用场景、行业应用
-                                        </Typography>
+                            {/* 智能分析 */}
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    onClick={() => router.push('/analytics')}
+                                    sx={{
+                                        p: 4,
+                                        height: 220,
+                                        borderRadius: 3,
+                                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(40px) saturate(180%)',
+                                        border: '1px solid rgba(88, 86, 214, 0.15)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&:hover': {
+                                            transform: 'translateY(-12px) scale(1.03)',
+                                            boxShadow: '0 25px 50px rgba(88, 86, 214, 0.25)',
+                                            bgcolor: 'rgba(88, 86, 214, 0.03)',
+                                            '&::before': {
+                                                opacity: 1
+                                            }
+                                        },
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            background: 'linear-gradient(135deg, rgba(88, 86, 214, 0.1) 0%, rgba(175, 82, 222, 0.1) 100%)',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease'
+                                        }
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 72,
+                                            height: 72,
+                                            borderRadius: 4,
+                                            background: 'linear-gradient(135deg, #5856D6 0%, #AF52DE 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            mb: 3,
+                                            boxShadow: '0 12px 24px rgba(88, 86, 214, 0.35)',
+                                            position: 'relative',
+                                            zIndex: 1
+                                        }}
+                                    >
+                                        <Typography sx={{ fontSize: 32, color: 'white' }}>📊</Typography>
                                     </Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, position: 'relative', zIndex: 1 }}>
+                                        智能分析
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                                        深度洞察生态系统健康度和发展趋势
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+
+                            {/* 图表中心 */}
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    onClick={() => router.push('/charts')}
+                                    sx={{
+                                        p: 4,
+                                        height: 220,
+                                        borderRadius: 3,
+                                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(40px) saturate(180%)',
+                                        border: '1px solid rgba(255, 149, 0, 0.15)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&:hover': {
+                                            transform: 'translateY(-12px) scale(1.03)',
+                                            boxShadow: '0 25px 50px rgba(255, 149, 0, 0.25)',
+                                            bgcolor: 'rgba(255, 149, 0, 0.03)',
+                                            '&::before': {
+                                                opacity: 1
+                                            }
+                                        },
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            background: 'linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%)',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease'
+                                        }
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 72,
+                                            height: 72,
+                                            borderRadius: 4,
+                                            background: 'linear-gradient(135deg, #FF9500 0%, #FF6B35 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            mb: 3,
+                                            boxShadow: '0 12px 24px rgba(255, 149, 0, 0.35)',
+                                            position: 'relative',
+                                            zIndex: 1
+                                        }}
+                                    >
+                                        <Typography sx={{ fontSize: 32, color: 'white' }}>📈</Typography>
+                                    </Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, position: 'relative', zIndex: 1 }}>
+                                        图表中心
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                                        可视化图表展示项目数据和指标
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+
+                            {/* 生态洞察 */}
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    onClick={() => router.push('/insights')}
+                                    sx={{
+                                        p: 4,
+                                        height: 220,
+                                        borderRadius: 3,
+                                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(40px) saturate(180%)',
+                                        border: '1px solid rgba(52, 199, 89, 0.15)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&:hover': {
+                                            transform: 'translateY(-12px) scale(1.03)',
+                                            boxShadow: '0 25px 50px rgba(52, 199, 89, 0.25)',
+                                            bgcolor: 'rgba(52, 199, 89, 0.03)',
+                                            '&::before': {
+                                                opacity: 1
+                                            }
+                                        },
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, rgba(48, 209, 88, 0.1) 100%)',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease'
+                                        }
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 72,
+                                            height: 72,
+                                            borderRadius: 4,
+                                            background: 'linear-gradient(135deg, #34C759 0%, #30D158 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            mb: 3,
+                                            boxShadow: '0 12px 24px rgba(52, 199, 89, 0.35)',
+                                            position: 'relative',
+                                            zIndex: 1
+                                        }}
+                                    >
+                                        <Typography sx={{ fontSize: 32, color: 'white' }}>🔍</Typography>
+                                    </Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, position: 'relative', zIndex: 1 }}>
+                                        生态洞察
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                                        发现技术趋势和开发者社区动态
+                                    </Typography>
                                 </Paper>
                             </Grid>
                         </Grid>
                     </Box>
+
+
 
                     {/* 技术实现 */}
                     <Box sx={{ py: 8, textAlign: 'center' }}>
