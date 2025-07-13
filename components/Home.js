@@ -232,6 +232,7 @@ const Home = () => {
                         }}
                     >
                         本平台依托 GitHub 丰富的开源数据，打造业界领先的 AI 大模型生态系统分析与可视化工具。我们通过多维度、全方位的数据挖掘与智能可视化，助力开发者、研究者和企业洞察大模型生态的最新趋势与核心竞争力。无论是技术选型、生态评估还是创新决策，这里都能为您提供权威、直观、深入的分析支持，助力把握 AI 时代的每一次机遇！
+                    </Typography>
 
                     {/* 搜索框和下拉列表 */}
                     <Paper
@@ -351,7 +352,7 @@ const Home = () => {
                     </Typography>
                     <Grid container spacing={4} justifyContent="center">
                         {/* GitHub项目分析 */}
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={12}>
                             <Paper
                                 elevation={0}
                                 sx={{
@@ -365,95 +366,46 @@ const Home = () => {
                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                                     <GitHubIcon sx={{ fontSize: 28, mr: 2, color: 'text.primary' }} />
                                     <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                                        GitHub项目分析
+                                        项目分析功能
                                     </Typography>
                                 </Box>
                                 <Box sx={{ textAlign: 'left' }}>
                                     <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                        1. 搜索与选择
+                                        1. 项目搜索与选择
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
-                                        • 在主页搜索框输入项目名称<br/>
-                                        • 从下拉列表选择目标项目<br/>
-                                        • 点击"分析"按钮开始分析
+                                        • 智能搜索：在搜索框输入GitHub项目名称，系统支持模糊匹配<br/>
+                                        • 快速选择：从下拉列表选择目标项目，支持键盘导航<br/>
+                                        • 一键分析：点击"分析"按钮即可开始深度分析
                                     </Typography>
 
                                     <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                        2. 查看评分详情
+                                        2. 多维度评分分析
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
-                                        • 点击评分卡片查看详细指标<br/>
-                                        • 了解代码质量评分依据<br/>
-                                        • 分析社区活跃度数据<br/>
-                                        • 评估项目影响力表现
+                                        • 代码质量评分：基于PR质量、代码审查效率、Issue解决效果<br/>
+                                        • 社区活跃度：评估贡献者多样性、新贡献者增长、响应速度<br/>
+                                        • 项目影响力：分析Stars增长、技术关注度、Fork应用情况<br/>
+                                        • 维护指数：综合评估项目的长期维护能力
                                     </Typography>
 
                                     <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                        3. 使用时序图表
+                                        3. 可视化数据展示
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
+                                        • 时序图表：展示项目各项指标的历史变化趋势<br/>
+                                        • 交互式探索：支持缩放、筛选、导出等功能<br/>
+                                        • 对比分析：多项目数据对比，洞察竞争优势
+                                    </Typography>
+
+                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
+                                        4. 项目详情信息
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" sx={{ pl: 2 }}>
-                                        • 调整时间范围分析趋势<br/>
-                                        • 使用缩放工具查看细节<br/>
-                                        • 导出数据生成分析报告
-                                    </Typography>
-                                </Box>
-                            </Paper>
-                        </Grid>
-
-                        {/* Hugging Face模型排行 */}
-                        <Grid item xs={12} md={6}>
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    p: 4,
-                                    height: '100%',
-                                    borderRadius: 2,
-                                    bgcolor: 'background.paper',
-                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                    <Box 
-                                        component="img"
-                                        src="/hf-logo.svg"
-                                        alt="Hugging Face"
-                                        sx={{ height: 28, mr: 2 }}
-                                    />
-                                    <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                                        Hugging Face分析
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ textAlign: 'left' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                        1. 模型排行榜
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
-                                        • 点击导航栏"模型排行"进入<br/>
-                                        • 使用筛选器选择任务类型<br/>
-                                        • 按各项指标进行排序<br/>
-                                        • 搜索特定模型查看详情
-                                    </Typography>
-
-                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                        2. 生态网络分析
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, pl: 2 }}>
-                                        • 点击"view"查看网络图<br/>
-                                        • 选择不同的视图模式：<br/>
-                                        &nbsp;&nbsp;- Top 100衍生模型<br/>
-                                        &nbsp;&nbsp;- 完整衍生关系<br/>
-                                        &nbsp;&nbsp;- 按作者分组视图<br/>
-                                        • 交互式探索网络关系
-                                    </Typography>
-
-                                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', color: 'primary.main', mb: 2 }}>
-                                        3. 生态大屏分析
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ pl: 2 }}>
-                                        • 查看语言支持分布<br/>
-                                        • 分析作者影响力排名<br/>
-                                        • 了解组织类型分布<br/>
-                                        • 掌握任务类型热度
+                                        • 基础信息：项目简介、开发语言、许可证信息<br/>
+                                        • 团队信息：核心贡献者、组织背景、社区规模<br/>
+                                        • 技术栈：依赖关系、架构分析、技术选型<br/>
+                                        • 生态影响：衍生项目、应用场景、行业应用
                                     </Typography>
                                 </Box>
                             </Paper>
@@ -492,7 +444,9 @@ const Home = () => {
                                     • 网页爬虫<br/>
                                     • Easy Graph 图计算<br/>
                                     • 数据预处理流水线<br/>
-                                    • 增量数据更新
+                                    • 增量数据更新<br/>
+                                    • GitHub API 集成<br/>
+                                    • 实时数据同步
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -512,9 +466,9 @@ const Home = () => {
                                     • Next.js 15 + React 19<br/>
                                     • Material-UI 组件库<br/>
                                     • ECharts 数据可视化<br/>
-                                    • PyVis 网络图<br/>
+                                    • 响应式图表设计<br/>
                                     • Tailwind CSS<br/>
-                                    • 响应式设计
+                                    • 现代化UI设计
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -531,12 +485,12 @@ const Home = () => {
                             >
                                 <Typography variant="h6" gutterBottom>后端服务</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    • Flask 框架<br/>
-                                    • 影响力算法<br/>
-                                    • RESTful API<br/>
-                                    • 数据预处理<br/>
-                                    • 缓存优化<br/>
-                                    • 性能监控
+                                    • Node.js 服务端<br/>
+                                    • RESTful API 设计<br/>
+                                    • 数据库优化<br/>
+                                    • 性能监控<br/>
+                                    • 缓存策略<br/>
+                                    • 服务器部署
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -724,10 +678,11 @@ const Home = () => {
                             >
                                 <Typography variant="h6" gutterBottom>数据扩展</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                    • 扩大数据采集范围<br/>
-                                    • 增加历史数据分析<br/>
+                                    • 扩大GitHub项目覆盖范围<br/>
+                                    • 增加历史数据深度分析<br/>
                                     • 引入更多评估维度<br/>
-                                    • 优化数据更新机制
+                                    • 优化数据更新机制<br/>
+                                    • 支持私有仓库分析
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -744,10 +699,11 @@ const Home = () => {
                             >
                                 <Typography variant="h6" gutterBottom>功能优化</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                    • 完善评分算法<br/>
+                                    • 完善评分算法准确性<br/>
                                     • 增强可视化效果<br/>
                                     • 提升用户交互体验<br/>
-                                    • 添加更多分析维度
+                                    • 添加更多分析维度<br/>
+                                    • 支持自定义仪表板
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -765,9 +721,10 @@ const Home = () => {
                                 <Typography variant="h6" gutterBottom>生态拓展</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
                                     • 支持更多开源平台<br/>
-                                    • 深化生态分析<br/>
-                                    • 开放数据接口<br/>
-                                    • 建立开发者社区
+                                    • 深化GitHub生态分析<br/>
+                                    • 开放数据接口API<br/>
+                                    • 建立开发者社区<br/>
+                                    • 提供企业级解决方案
                                 </Typography>
                             </Paper>
                         </Grid>
