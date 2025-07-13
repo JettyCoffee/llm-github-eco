@@ -102,10 +102,10 @@ const Home = () => {
                             component="h1"
                             sx={{ 
                                 fontWeight: 700,
-                                background: 'linear-gradient(45deg, #007AFF 30%, #5856D6 90%)',
+                                background: 'linear-gradient(45deg, #007AFF 30%,rgb(136, 67, 234) 90%)',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
-                                textShadow: '0 0 30px rgba(0, 122, 255, 0.3)',
+                                textShadow: '0 0 30px rgba(0, 123, 255, 0.89)',
                                 mb: 2,
                                 fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
                                 letterSpacing: '-0.02em'
@@ -178,7 +178,7 @@ const Home = () => {
                                 lineHeight: 1.8,
                                 fontSize: '1.1rem',
                                 fontWeight: 400,
-                                textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)'
+                                textShadow: '0 2px 4px rgba(255, 255, 255, 1)'
                             }}
                         >
                             本平台依托 GitHub 丰富的开源数据，打造业界领先的 AI 大模型生态系统分析与可视化工具。我们通过多维度、全方位的数据挖掘与智能可视化，助力开发者、研究者和企业洞察大模型生态的最新趋势与核心竞争力。无论是技术选型、生态评估还是创新决策，这里都能为您提供权威、直观、深入的分析支持，助力把握 AI 时代的每一次机遇！
@@ -189,13 +189,13 @@ const Home = () => {
                             elevation={0}
                             ref={searchRef}
                             sx={{
-                                p: 4,
-                                maxWidth: '800px',
+                                p: 3,
+                                maxWidth: '900px',
                                 mx: 'auto',
-                                borderRadius: 4,
-                                bgcolor: 'rgba(255, 255, 255, 0.95)',
+                                borderRadius: 5,
+                                bgcolor: 'rgba(255, 255, 255, 0.66)',
                                 backdropFilter: 'blur(40px) saturate(180%)',
-                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                border: '1px solid rgba(255, 255, 255, 0.88)',
                                 boxShadow: `
                                     0 8px 32px rgba(0, 0, 0, 0.12),
                                     0 1px 0 rgba(255, 255, 255, 0.8) inset,

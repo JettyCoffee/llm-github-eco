@@ -9,7 +9,9 @@ import {
     Typography,
     Link,
     Fade,
-    Collapse
+    Collapse,
+    Slide,
+    Zoom
 } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -21,6 +23,9 @@ import SearchComponent from './SearchComponent';
 const Header = ({ showSearch = false }) => {
     const { setSelectedProjects } = useContext(ProjectContext);
     const router = useRouter();
+    
+    // 根据当前路由自动判断是否显示搜索栏
+    const shouldShowSearch = router.pathname !== '/';
 
     const handleProjectSelect = (project) => {
         setSelectedProjects([project]);
@@ -35,7 +40,7 @@ const Header = ({ showSearch = false }) => {
             sx={{
                 borderBottom: '1px solid',
                 borderColor: 'divider',
-                bgcolor: 'rgba(255, 255, 255, 0.95)',
+                bgcolor: 'rgba(255, 255, 255, 0.5)',
                 backdropFilter: 'blur(20px)',
                 zIndex: (theme) => theme.zIndex.drawer + 1,
             }}
@@ -143,23 +148,76 @@ const Header = ({ showSearch = false }) => {
                             项目总览
                         </Link>
                         
-                        {/* 搜索栏 - 现在在中间 */}
-                        <Box 
-                            sx={{ 
-                                display: showSearch ? 'block' : 'none',
-                                minWidth: '200px',
-                                maxWidth: '300px',
-                                mx: 1
-                            }}
-                        >
-                            <SearchComponent 
-                                compact={true}
-                                showAnalyzeButton={true}
-                                onProjectSelect={handleProjectSelect}
-                                placeholder="搜索项目..."
-                                backgroundColor="rgba(0, 122, 255, 0.1)"
-                            />
-                        </Box>
+                        {/* 搜索栏 - 带动画效果 */}
+                        <Fade in={shouldShowSearch} timeout={500}>
+                            <Box 
+                                sx={{ 
+                                    display: shouldShowSearch ? 'block' : 'none',
+                                    minWidth: '200px',
+                                    maxWidth: '320px',
+                                    mx: 1,
+                                    position: 'relative'
+                                }}
+                            >
+                                <Zoom in={shouldShowSearch} timeout={300}>
+                                    <Box
+                                        sx={{
+                                            position: 'relative',
+                                            '&::before': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                background: 'linear-gradient(45deg, rgba(0, 122, 255, 0.1), rgba(88, 86, 214, 0.1))',
+                                                borderRadius: '12px',
+                                                opacity: 0,
+                                                transition: 'opacity 0.3s ease',
+                                                pointerEvents: 'none'
+                                            },
+                                            '&:hover::before': {
+                                                opacity: 1
+                                            }
+                                        }}
+                                    >
+                                        <SearchComponent 
+                                            compact={true}
+                                            showAnalyzeButton={true}
+                                            onProjectSelect={handleProjectSelect}
+                                            placeholder="搜索项目..."
+                                            backgroundColor="rgba(248, 249, 250, 0.8)"
+                                            sx={{
+                                                '& .MuiInputBase-root': {
+                                                    borderRadius: '12px',
+                                                    backdropFilter: 'blur(10px)',
+                                                    border: '1px solid rgba(0, 122, 255, 0.2)',
+                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    '&:hover': {
+                                                        borderColor: 'rgba(0, 122, 255, 0.4)',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 4px 12px rgba(0, 122, 255, 0.15)'
+                                                    },
+                                                    '&.Mui-focused': {
+                                                        borderColor: 'rgba(0, 122, 255, 0.6)',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 6px 20px rgba(0, 122, 255, 0.2)'
+                                                    }
+                                                },
+                                                '& .MuiInputBase-input': {
+                                                    fontSize: '0.875rem',
+                                                    color: 'text.primary',
+                                                    '&::placeholder': {
+                                                        color: 'text.secondary',
+                                                        opacity: 0.8
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </Box>
+                                </Zoom>
+                            </Box>
+                        </Fade>
                         
                         <Link
                             href="/analytics"

@@ -1,7 +1,6 @@
 // components/Dashboard.js
 import React, { useState, useEffect, useContext } from 'react';
 import { ProjectContext } from '../contexts/ProjectContext';
-import Footer from './Footer';
 import ChartCard from './ChartCard';
 import { ChartService } from '../utils/ChartService';
 import {
@@ -945,7 +944,6 @@ const Dashboard = () => {
                     </Box>
                 </Container>
             </Box>
-            <Footer />
 
             <style jsx global>{`
                 body {
