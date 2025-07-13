@@ -17,11 +17,25 @@ import {
     Select,
     MenuItem,
     FormControl,
-    InputLabel
+    InputLabel,
+    Tab,
+    Tabs,
+    IconButton,
+    Tooltip,
+    Badge,
+    LinearProgress,
+    Switch,
+    FormControlLabel,
+    Drawer,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemIcon,
+    Avatar,
+    AvatarGroup
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { DataService } from '../lib/dataService';
 import dynamic from 'next/dynamic';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
@@ -30,6 +44,17 @@ import PieChartIcon from '@mui/icons-material/PieChart';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import DownloadIcon from '@mui/icons-material/Download';
+import SettingsIcon from '@mui/icons-material/Settings';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import InsightsIcon from '@mui/icons-material/Insights';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import BubbleChartIcon from '@mui/icons-material/BubbleChart';
+import RadarIcon from '@mui/icons-material/Radar';
+import ScatterPlotIcon from '@mui/icons-material/ScatterPlot';
 
 // 动态导入ECharts组件
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
@@ -41,6 +66,13 @@ const Charts = () => {
     const [projectsData, setProjectsData] = useState({});
     const [selectedTimeRange, setSelectedTimeRange] = useState('6months');
     const [selectedMetric, setSelectedMetric] = useState('stars');
+    const [activeTab, setActiveTab] = useState(0);
+    const [showHeaderSearch, setShowHeaderSearch] = useState(true);
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
+    const [animationEnabled, setAnimationEnabled] = useState(true);
+    const [fullscreenChart, setFullscreenChart] = useState(null);
+    const [lastUpdated, setLastUpdated] = useState(new Date());
     const router = useRouter();
 
     // 时间范围选项
@@ -493,7 +525,6 @@ const Charts = () => {
                     )}
                 </Container>
             </Box>
-            <Footer />
         </>
     );
 };

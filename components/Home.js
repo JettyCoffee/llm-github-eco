@@ -45,13 +45,15 @@ const Home = () => {
     return (
         <>
             <Header showSearch={showHeaderSearch} />
+            {/* 顶部背景区域 */}
             <Box 
                 sx={{ 
-                    minHeight: '100vh',
                     position: 'relative',
+                    height: '100vh',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     pt: '64px',
                     // 背景图片设置
                     backgroundImage: 'url(/back.jpg)',
@@ -66,9 +68,9 @@ const Home = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        // 高斯模糊和遮罩效果
-                        backdropFilter: 'blur(30px) saturate(180%)',
-                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        // 减少高斯模糊，让图片更清晰
+                        backdropFilter: 'blur(1.5px)',
+                        backgroundColor: 'rgba(255, 255, 255, 0)',
                         zIndex: 1
                     },
                     '&::after': {
@@ -79,9 +81,9 @@ const Home = () => {
                         right: 0,
                         bottom: 0,
                         background: `
-                            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-                            radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%)
+                            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0) 0%, transparent 50%),
+                            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0) 0%, transparent 50%),
+                            radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0) 0%, transparent 50%)
                         `,
                         zIndex: 2
                     }
@@ -91,7 +93,7 @@ const Home = () => {
                     <Box 
                         sx={{ 
                             textAlign: 'center',
-                            py: 8
+                            py: 4
                         }}
                     >
                         {/* 标题 */}
@@ -220,16 +222,20 @@ const Home = () => {
                             />
                         </Paper>
                     </Box>
-                    
+                </Container>
+            </Box>
+            
+            {/* 白色底色的内容区域 */}
+            <Box sx={{ bgcolor: 'white', minHeight: '100vh' }}>
+                <Container maxWidth="xl" sx={{ py: 8 }}>
                     {/* 功能导航 */}
-                    <Box sx={{ py: 8, textAlign: 'center' }}>
+                    <Box sx={{ textAlign: 'center', mb: 8 }}>
                         <Typography 
                             variant="h4" 
                             sx={{ 
                                 mb: 6,
                                 fontWeight: 600,
                                 color: 'rgba(0, 0, 0, 0.9)',
-                                textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
                                 fontSize: { xs: '1.8rem', sm: '2rem', md: '2.5rem' }
                             }}
                         >
@@ -249,57 +255,34 @@ const Home = () => {
                                         backdropFilter: 'blur(40px) saturate(180%)',
                                         border: '1px solid rgba(0, 122, 255, 0.15)',
                                         cursor: 'pointer',
-                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        position: 'relative',
-                                        overflow: 'hidden',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&:hover': {
-                                            transform: 'translateY(-12px) scale(1.03)',
-                                            boxShadow: '0 25px 50px rgba(0, 122, 255, 0.25)',
-                                            bgcolor: 'rgba(0, 122, 255, 0.03)',
-                                            '&::before': {
-                                                opacity: 1
-                                            }
-                                        },
-                                        '&::before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            background: 'linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.1) 100%)',
-                                            opacity: 0,
-                                            transition: 'opacity 0.3s ease'
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(0, 122, 255, 0.15)',
+                                            bgcolor: 'rgba(0, 122, 255, 0.05)'
                                         }
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            width: 72,
-                                            height: 72,
-                                            borderRadius: 4,
-                                            background: 'linear-gradient(135deg, #007AFF 0%, #5856D6 100%)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            mb: 3,
-                                            boxShadow: '0 12px 24px rgba(0, 122, 255, 0.35)',
-                                            position: 'relative',
-                                            zIndex: 1
-                                        }}
-                                    >
-                                        <GitHubIcon sx={{ fontSize: 32, color: 'white' }} />
+                                    <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <Box
+                                            component="img"
+                                            src="/window.svg"
+                                            alt="Projects"
+                                            sx={{
+                                                width: 48,
+                                                height: 48,
+                                                mx: 'auto',
+                                                mb: 2,
+                                                filter: 'drop-shadow(0px 4px 8px rgba(0, 122, 255, 0.3))'
+                                            }}
+                                        />
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#007AFF', mb: 1 }}>
+                                            项目总览
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                                            浏览最新的大模型项目，查看实时数据统计与趋势分析
+                                        </Typography>
                                     </Box>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, position: 'relative', zIndex: 1 }}>
-                                        项目总览
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                                        GitHub LLM生态系统中的精选项目
-                                    </Typography>
                                 </Paper>
                             </Grid>
 
@@ -316,57 +299,34 @@ const Home = () => {
                                         backdropFilter: 'blur(40px) saturate(180%)',
                                         border: '1px solid rgba(88, 86, 214, 0.15)',
                                         cursor: 'pointer',
-                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        position: 'relative',
-                                        overflow: 'hidden',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&:hover': {
-                                            transform: 'translateY(-12px) scale(1.03)',
-                                            boxShadow: '0 25px 50px rgba(88, 86, 214, 0.25)',
-                                            bgcolor: 'rgba(88, 86, 214, 0.03)',
-                                            '&::before': {
-                                                opacity: 1
-                                            }
-                                        },
-                                        '&::before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            background: 'linear-gradient(135deg, rgba(88, 86, 214, 0.1) 0%, rgba(175, 82, 222, 0.1) 100%)',
-                                            opacity: 0,
-                                            transition: 'opacity 0.3s ease'
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(88, 86, 214, 0.15)',
+                                            bgcolor: 'rgba(88, 86, 214, 0.05)'
                                         }
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            width: 72,
-                                            height: 72,
-                                            borderRadius: 4,
-                                            background: 'linear-gradient(135deg, #5856D6 0%, #AF52DE 100%)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            mb: 3,
-                                            boxShadow: '0 12px 24px rgba(88, 86, 214, 0.35)',
-                                            position: 'relative',
-                                            zIndex: 1
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 32, color: 'white' }}>📊</Typography>
+                                    <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <Box
+                                            component="img"
+                                            src="/next.svg"
+                                            alt="Analytics"
+                                            sx={{
+                                                width: 48,
+                                                height: 48,
+                                                mx: 'auto',
+                                                mb: 2,
+                                                filter: 'drop-shadow(0px 4px 8px rgba(88, 86, 214, 0.3))'
+                                            }}
+                                        />
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#5856D6', mb: 1 }}>
+                                            智能分析
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                                            AI 驱动的深度项目分析，提供专业的技术评估与预测
+                                        </Typography>
                                     </Box>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, position: 'relative', zIndex: 1 }}>
-                                        智能分析
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                                        深度洞察生态系统健康度和发展趋势
-                                    </Typography>
                                 </Paper>
                             </Grid>
 
@@ -381,59 +341,36 @@ const Home = () => {
                                         borderRadius: 3,
                                         bgcolor: 'rgba(255, 255, 255, 0.9)',
                                         backdropFilter: 'blur(40px) saturate(180%)',
-                                        border: '1px solid rgba(255, 149, 0, 0.15)',
+                                        border: '1px solid rgba(34, 197, 94, 0.15)',
                                         cursor: 'pointer',
-                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        position: 'relative',
-                                        overflow: 'hidden',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&:hover': {
-                                            transform: 'translateY(-12px) scale(1.03)',
-                                            boxShadow: '0 25px 50px rgba(255, 149, 0, 0.25)',
-                                            bgcolor: 'rgba(255, 149, 0, 0.03)',
-                                            '&::before': {
-                                                opacity: 1
-                                            }
-                                        },
-                                        '&::before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            background: 'linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%)',
-                                            opacity: 0,
-                                            transition: 'opacity 0.3s ease'
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(34, 197, 94, 0.15)',
+                                            bgcolor: 'rgba(34, 197, 94, 0.05)'
                                         }
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            width: 72,
-                                            height: 72,
-                                            borderRadius: 4,
-                                            background: 'linear-gradient(135deg, #FF9500 0%, #FF6B35 100%)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            mb: 3,
-                                            boxShadow: '0 12px 24px rgba(255, 149, 0, 0.35)',
-                                            position: 'relative',
-                                            zIndex: 1
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 32, color: 'white' }}>📈</Typography>
+                                    <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <Box
+                                            component="img"
+                                            src="/file.svg"
+                                            alt="Charts"
+                                            sx={{
+                                                width: 48,
+                                                height: 48,
+                                                mx: 'auto',
+                                                mb: 2,
+                                                filter: 'drop-shadow(0px 4px 8px rgba(34, 197, 94, 0.3))'
+                                            }}
+                                        />
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#22C55E', mb: 1 }}>
+                                            图表中心
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                                            丰富的可视化图表，多维度展示数据洞察与趋势
+                                        </Typography>
                                     </Box>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, position: 'relative', zIndex: 1 }}>
-                                        图表中心
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                                        可视化图表展示项目数据和指标
-                                    </Typography>
                                 </Paper>
                             </Grid>
 
@@ -448,385 +385,168 @@ const Home = () => {
                                         borderRadius: 3,
                                         bgcolor: 'rgba(255, 255, 255, 0.9)',
                                         backdropFilter: 'blur(40px) saturate(180%)',
-                                        border: '1px solid rgba(52, 199, 89, 0.15)',
+                                        border: '1px solid rgba(239, 68, 68, 0.15)',
                                         cursor: 'pointer',
-                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        position: 'relative',
-                                        overflow: 'hidden',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&:hover': {
-                                            transform: 'translateY(-12px) scale(1.03)',
-                                            boxShadow: '0 25px 50px rgba(52, 199, 89, 0.25)',
-                                            bgcolor: 'rgba(52, 199, 89, 0.03)',
-                                            '&::before': {
-                                                opacity: 1
-                                            }
-                                        },
-                                        '&::before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, rgba(48, 209, 88, 0.1) 100%)',
-                                            opacity: 0,
-                                            transition: 'opacity 0.3s ease'
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(239, 68, 68, 0.15)',
+                                            bgcolor: 'rgba(239, 68, 68, 0.05)'
                                         }
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            width: 72,
-                                            height: 72,
-                                            borderRadius: 4,
-                                            background: 'linear-gradient(135deg, #34C759 0%, #30D158 100%)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            mb: 3,
-                                            boxShadow: '0 12px 24px rgba(52, 199, 89, 0.35)',
-                                            position: 'relative',
-                                            zIndex: 1
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 32, color: 'white' }}>🔍</Typography>
+                                    <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <Box
+                                            component="img"
+                                            src="/globe.svg"
+                                            alt="Insights"
+                                            sx={{
+                                                width: 48,
+                                                height: 48,
+                                                mx: 'auto',
+                                                mb: 2,
+                                                filter: 'drop-shadow(0px 4px 8px rgba(239, 68, 68, 0.3))'
+                                            }}
+                                        />
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#EF4444', mb: 1 }}>
+                                            生态洞察
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                                            深入分析大模型生态系统，发现技术发展规律
+                                        </Typography>
                                     </Box>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, position: 'relative', zIndex: 1 }}>
-                                        生态洞察
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                                        发现技术趋势和开发者社区动态
-                                    </Typography>
                                 </Paper>
                             </Grid>
-                        </Grid>
-                    </Box>
+                            
+                            {/* 项目排行榜 */}
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    onClick={() => router.push('/rankings')}
+                                    sx={{
+                                        p: 4,
+                                        height: 220,
+                                        borderRadius: 3,
+                                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(40px) saturate(180%)',
+                                        border: '1px solid rgba(251, 191, 36, 0.15)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(251, 191, 36, 0.15)',
+                                            bgcolor: 'rgba(251, 191, 36, 0.05)'
+                                        }
+                                    }}
+                                >
+                                    <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <Typography sx={{ fontSize: 48, mb: 2 }}>🏆</Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#F59E0B', mb: 1 }}>
+                                            项目排行榜
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                                            实时更新的大模型项目排行榜，多维度评估项目表现
+                                        </Typography>
+                                    </Box>
+                                </Paper>
+                            </Grid>
 
+                            {/* 趋势分析 */}
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    onClick={() => router.push('/trends')}
+                                    sx={{
+                                        p: 4,
+                                        height: 220,
+                                        borderRadius: 3,
+                                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(40px) saturate(180%)',
+                                        border: '1px solid rgba(139, 69, 19, 0.15)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(139, 69, 19, 0.15)',
+                                            bgcolor: 'rgba(139, 69, 19, 0.05)'
+                                        }
+                                    }}
+                                >
+                                    <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <Typography sx={{ fontSize: 48, mb: 2 }}>📈</Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#8B4513', mb: 1 }}>
+                                            趋势分析
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                                            分析大模型技术发展趋势，预测未来发展方向
+                                        </Typography>
+                                    </Box>
+                                </Paper>
+                            </Grid>
 
+                            {/* 开发者洞察 */}
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Paper
+                                    elevation={0}
+                                    onClick={() => router.push('/developers')}
+                                    sx={{
+                                        p: 4,
+                                        height: 220,
+                                        borderRadius: 3,
+                                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(40px) saturate(180%)',
+                                        border: '1px solid rgba(168, 85, 247, 0.15)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(168, 85, 247, 0.15)',
+                                            bgcolor: 'rgba(168, 85, 247, 0.05)'
+                                        }
+                                    }}
+                                >
+                                    <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <Typography sx={{ fontSize: 48, mb: 2 }}>👥</Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#A855F7', mb: 1 }}>
+                                            开发者洞察
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                                            分析开发者贡献模式，识别技术社区关键人物
+                                        </Typography>
+                                    </Box>
+                                </Paper>
+                            </Grid>
 
-                    {/* 技术实现 */}
-                    <Box sx={{ py: 8, textAlign: 'center' }}>
-                        <Typography 
-                            variant="h4" 
-                            sx={{ 
-                                mb: 4,
-                                fontWeight: 600,
-                                color: 'text.primary'
-                            }}
-                        >
-                            技术实现
-                        </Typography>
-                        <Grid container spacing={4} justifyContent="center">
-                            <Grid item xs={12} md={4}>
+                            {/* 技术栈分析 */}
+                            <Grid item xs={12} sm={6} md={3}>
                                 <Paper
                                     elevation={0}
+                                    onClick={() => router.push('/tech-stack')}
                                     sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+                                        p: 4,
+                                        height: 220,
+                                        borderRadius: 3,
+                                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(40px) saturate(180%)',
+                                        border: '1px solid rgba(59, 130, 246, 0.15)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(59, 130, 246, 0.15)',
+                                            bgcolor: 'rgba(59, 130, 246, 0.05)'
+                                        }
                                     }}
                                 >
-                                    <Typography variant="h6" gutterBottom>数据获取与处理</Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        • OpenDigger 数据集<br/>
-                                        • Hugging Face API<br/>
-                                        • 网页爬虫<br/>
-                                        • Easy Graph 图计算<br/>
-                                        • 数据预处理流水线<br/>
-                                        • 增量数据更新<br/>
-                                        • GitHub API 集成<br/>
-                                        • 实时数据同步
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>前端开发</Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        • Next.js 15 + React 19<br/>
-                                        • Material-UI 组件库<br/>
-                                        • ECharts 数据可视化<br/>
-                                        • 响应式图表设计<br/>
-                                        • Tailwind CSS<br/>
-                                        • 现代化UI设计
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>后端服务</Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        • Node.js 服务端<br/>
-                                        • RESTful API 设计<br/>
-                                        • 数据库优化<br/>
-                                        • 性能监控<br/>
-                                        • 缓存策略<br/>
-                                        • 服务器部署
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                        </Grid>
-                    </Box>
-
-                    {/* 评分算法 */}
-                    <Box sx={{ py: 8, textAlign: 'center' }}>
-                        <Typography 
-                            variant="h4" 
-                            sx={{ 
-                                mb: 4,
-                                fontWeight: 600,
-                                color: 'text.primary'
-                            }}
-                        >
-                            评分算法
-                        </Typography>
-                        <Grid container spacing={4} justifyContent="center">
-                            <Grid item xs={12} md={6}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>评分算法</Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                        基于GitHub开源项目的多维度评价体系：<br/>
-                                        • 代码质量指标（PR接受率、审查效率）<br/>
-                                        • 社区活跃度（贡献者增长、响应时间）<br/>
-                                        • 项目影响力（Stars、Fork、关注度）<br/>
-                                        • 维护稳定性（更新频率、Issue处理）<br/><br/>
-                                        算法特点：<br/>
-                                        • 动态权重调整<br/>
-                                        • 时间序列分析<br/>
-                                        • 趋势预测能力
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>技术架构</Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                        现代化的全栈技术方案：<br/>
-                                        • 前端：React + Next.js + Material-UI<br/>
-                                        • 后端：Node.js + Express + RESTful API<br/>
-                                        • 数据库：PostgreSQL + Supabase<br/>
-                                        • 可视化：ECharts + 自定义图表<br/><br/>
-                                        性能优化：<br/>
-                                        • 服务端渲染（SSR）<br/>
-                                        • 数据缓存策略<br/>
-                                        • 组件懒加载<br/>
-                                        • CDN加速部署
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                        </Grid>
-                    </Box>
-
-                    {/* 项目架构 */}
-                    <Box sx={{ py: 8, textAlign: 'center' }}>
-                        <Typography 
-                            variant="h4" 
-                            sx={{ 
-                                mb: 4,
-                                fontWeight: 600,
-                                color: 'text.primary'
-                            }}
-                        >
-                            项目架构
-                        </Typography>
-                        <Grid container spacing={4} justifyContent="center">
-                            <Grid item xs={12} md={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>数据获取模块</Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                        • 模型元数据获取<br/>
-                                        &nbsp;&nbsp;- 基础信息采集<br/>
-                                        &nbsp;&nbsp;- 下载量统计<br/>
-                                        &nbsp;&nbsp;- 点赞数追踪<br/>
-                                        • 作者信息采集<br/>
-                                        &nbsp;&nbsp;- 个人/组织识别<br/>
-                                        &nbsp;&nbsp;- 影响力评估<br/>
-                                        • 衍生关系分析<br/>
-                                        &nbsp;&nbsp;- Model Tree 构建<br/>
-                                        &nbsp;&nbsp;- 关系类型识别
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>数据处理模块</Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                        • 图数据处理<br/>
-                                        &nbsp;&nbsp;- 节点属性定义<br/>
-                                        &nbsp;&nbsp;- 边关系构建<br/>
-                                        &nbsp;&nbsp;- 图计算优化<br/>
-                                        • 影响力计算<br/>
-                                        &nbsp;&nbsp;- 自身影响力<br/>
-                                        &nbsp;&nbsp;- 关系传播<br/>
-                                        • 数据预处理<br/>
-                                        &nbsp;&nbsp;- 清洗与过滤<br/>
-                                        &nbsp;&nbsp;- 格式标准化
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>可视化模块</Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                        • 排行榜系统<br/>
-                                        &nbsp;&nbsp;- 多维度排序<br/>
-                                        &nbsp;&nbsp;- 实时更新<br/>
-                                        &nbsp;&nbsp;- 筛选功能<br/>
-                                        • 网络关系图<br/>
-                                        &nbsp;&nbsp;- 多视图切换<br/>
-                                        &nbsp;&nbsp;- 交互式探索<br/>
-                                        • 数据大屏<br/>
-                                        &nbsp;&nbsp;- 实时统计<br/>
-                                        &nbsp;&nbsp;- 趋势分析
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                        </Grid>
-                    </Box>
-
-                    {/* 未来规划 */}
-                    <Box sx={{ py: 8, textAlign: 'center' }}>
-                        <Typography 
-                            variant="h4" 
-                            sx={{ 
-                                mb: 4,
-                                fontWeight: 600,
-                                color: 'text.primary'
-                            }}
-                        >
-                            未来规划
-                        </Typography>
-                        <Grid container spacing={4} justifyContent="center">
-                            <Grid item xs={12} md={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>数据扩展</Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                        • 扩大GitHub项目覆盖范围<br/>
-                                        • 增加历史数据深度分析<br/>
-                                        • 引入更多评估维度<br/>
-                                        • 优化数据更新机制<br/>
-                                        • 支持私有仓库分析
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>功能优化</Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                        • 完善评分算法准确性<br/>
-                                        • 增强可视化效果<br/>
-                                        • 提升用户交互体验<br/>
-                                        • 添加更多分析维度<br/>
-                                        • 支持自定义仪表板
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 3,
-                                        height: '100%',
-                                        borderRadius: 2,
-                                        bgcolor: 'background.paper',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-                                    }}
-                                >
-                                    <Typography variant="h6" gutterBottom>生态拓展</Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
-                                        • 支持更多开源平台<br/>
-                                        • 深化GitHub生态分析<br/>
-                                        • 开放数据接口API<br/>
-                                        • 建立开发者社区<br/>
-                                        • 提供企业级解决方案
-                                    </Typography>
+                                    <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <Typography sx={{ fontSize: 48, mb: 2 }}>⚙️</Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#3B82F6', mb: 1 }}>
+                                            技术栈分析
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                                            深入分析项目技术栈选择，发现技术偏好和趋势
+                                        </Typography>
+                                    </Box>
                                 </Paper>
                             </Grid>
                         </Grid>

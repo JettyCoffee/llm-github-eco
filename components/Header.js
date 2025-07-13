@@ -45,17 +45,17 @@ const Header = ({ showSearch = false }) => {
                     disableGutters 
                     sx={{ 
                         minHeight: '64px',
-                        position: 'relative'
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
                     }}
                 >
-                    {/* Logo和品牌名 - 始终在左侧 */}
+                    {/* Logo和品牌名 - 左侧 */}
                     <Box 
                         sx={{ 
                             display: 'flex', 
                             alignItems: 'center',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            transform: showSearch ? 'translateX(0)' : 'translateX(0)',
-                            zIndex: 2
+                            minWidth: 'fit-content'
                         }}
                     >
                         <Link
@@ -86,8 +86,7 @@ const Header = ({ showSearch = false }) => {
                                     background: 'linear-gradient(45deg, #007AFF 30%, #5856D6 90%)',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
-                                    display: { xs: 'none', sm: showSearch ? 'none' : 'block', md: 'block' },
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                    display: { xs: 'none', md: 'block' }
                                 }}
                             >
                                 GitHub 大模型生态系统可视化
@@ -95,21 +94,14 @@ const Header = ({ showSearch = false }) => {
                         </Link>
                     </Box>
 
-                    {/* 中央导航菜单 */}
+                    {/* 中央导航菜单 - 包含搜索栏 */}
                     <Box 
                         sx={{ 
-                            position: 'absolute',
-                            left: '50%',
-                            top: '50%',
-                            transform: showSearch 
-                                ? 'translate(-50%, -50%) scale(0.8) translateX(-80px)' 
-                                : 'translate(-50%, -50%) scale(1)',
-                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                            opacity: showSearch ? 0.7 : 1,
                             display: 'flex',
-                            gap: { xs: 1, md: 3 },
                             alignItems: 'center',
-                            zIndex: showSearch ? 1 : 2
+                            gap: { xs: 1, md: 2 },
+                            flex: 1,
+                            justifyContent: 'center'
                         }}
                     >
                         <Link
@@ -150,6 +142,25 @@ const Header = ({ showSearch = false }) => {
                         >
                             项目总览
                         </Link>
+                        
+                        {/* 搜索栏 - 现在在中间 */}
+                        <Box 
+                            sx={{ 
+                                display: showSearch ? 'block' : 'none',
+                                minWidth: '200px',
+                                maxWidth: '300px',
+                                mx: 1
+                            }}
+                        >
+                            <SearchComponent 
+                                compact={true}
+                                showAnalyzeButton={true}
+                                onProjectSelect={handleProjectSelect}
+                                placeholder="搜索项目..."
+                                backgroundColor="rgba(0, 122, 255, 0.1)"
+                            />
+                        </Box>
+                        
                         <Link
                             href="/analytics"
                             sx={{
@@ -190,36 +201,13 @@ const Header = ({ showSearch = false }) => {
                         </Link>
                     </Box>
 
-                    {/* 搜索框 - 从右侧滑入 */}
-                    <Box 
-                        sx={{ 
-                            position: 'absolute',
-                            right: showSearch ? '120px' : '-400px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                            width: '300px',
-                            zIndex: 3
-                        }}
-                    >
-                        <SearchComponent 
-                            compact={true}
-                            showAnalyzeButton={true}
-                            onProjectSelect={handleProjectSelect}
-                            placeholder="搜索项目..."
-                            backgroundColor="rgba(0, 122, 255, 0.1)"
-                        />
-                    </Box>
-
                     {/* 右侧工具栏 */}
                     <Box 
                         sx={{ 
                             display: 'flex', 
                             gap: 1, 
                             alignItems: 'center',
-                            marginLeft: 'auto',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            zIndex: 2
+                            minWidth: 'fit-content'
                         }}
                     >
                         <IconButton 

@@ -32,7 +32,6 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { DataService } from '../lib/dataService';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -40,7 +39,6 @@ import PsychologyIcon from '@mui/icons-material/Psychology';
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import GroupIcon from '@mui/icons-material/Group';
 import StarIcon from '@mui/icons-material/Star';
-import ForkLeftIcon from '@mui/icons-material/ForkLeft';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import SpeedIcon from '@mui/icons-material/Speed';
 import SecurityIcon from '@mui/icons-material/Security';
@@ -675,7 +673,6 @@ const Analytics = () => {
                     )}
                 </Container>
             </Box>
-            <Footer />
         </>
     );
 };
