@@ -1,0 +1,2 @@
+对home.js主页面进行扩展，丰富内容，同时删除所有与huggingface相关内容
+对header.js和home.js进行联动，将home.js的搜索控件独立化，在home界面向下滑动到header遮盖住搜索控件时将header的搜索控件加载。header上原有的链接按钮等等需要给搜索控件让位~

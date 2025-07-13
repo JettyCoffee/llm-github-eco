@@ -66,7 +66,7 @@ const Header = () => {
                                     WebkitTextFillColor: 'transparent'
                                 }}
                             >
-                                LLM Ecosystem Visualization
+                                Github 大模型生态系统可视化
                             </Typography>
                         </Link>
                     </Box>
@@ -119,46 +119,6 @@ const Header = () => {
                         >
                             项目分析
                         </Link>
-                        <Link
-                            href="/rankings"
-                            sx={{
-                                textDecoration: 'none',
-                                color: 'text.primary',
-                                fontSize: '0.875rem',
-                                fontWeight: 500,
-                                py: 1,
-                                px: 2,
-                                borderRadius: 1,
-                                transition: 'all 0.2s',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                    transform: 'translateY(-2px)',
-                                }
-                            }}
-                        >
-                            模型排行榜
-                        </Link>
-                        <Link
-                            href="http://101.132.251.146:5000/dashboard/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            sx={{
-                                textDecoration: 'none',
-                                color: 'text.primary',
-                                fontSize: '0.875rem',
-                                fontWeight: 500,
-                                py: 1,
-                                px: 2,
-                                borderRadius: 1,
-                                transition: 'all 0.2s',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                    transform: 'translateY(-2px)',
-                                }
-                            }}
-                        >
-                            HuggingFace 数据大屏
-                        </Link>
                     </Box>
 
                     {/* 右侧工具栏 */}
@@ -175,7 +135,7 @@ const Header = () => {
 
                         <Box
                             component="a"
-                            href="https://github.com/zzsyppt/llm-eco-viz"
+                            href="https://github.com/JettyCoffee/llm-github-eco"
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{

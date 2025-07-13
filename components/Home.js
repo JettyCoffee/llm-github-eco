@@ -172,7 +172,7 @@ const Home = () => {
                             mb: 2
                         }}
                     >
-                        LLM Ecosystem Visualization
+                        Github 大模型生态系统可视化
                     </Typography>
 
                     {/* 副标题 */}
@@ -198,7 +198,7 @@ const Home = () => {
                             />
                         </Link>
                         <Link
-                            href="https://github.com/zzsyppt/llm-eco-viz"
+                            href="https://github.com/JettyCoffee/llm-github-eco"
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{
@@ -210,8 +210,8 @@ const Home = () => {
                         >
                             <Box
                                 component="img"
-                                src="/Project-LLM-Eco-Viz-2196F3.svg"
-                                alt="Project LLM Eco Viz"
+                                src="/Project-LLM-Github-Eco-2196F3.svg"
+                                alt="Project LLM Github Eco"
                                 sx={{ 
                                     height: '20px'
                                 }}
@@ -231,9 +231,7 @@ const Home = () => {
                             fontSize: '1.1rem'
                         }}
                     >
-                        本项目是基于 GitHub 和 Hugging Face 的活动数据，构建一个开源 AI 大模型生态分析与可视化平台。
-                        通过多维度的数据分析和可视化展示，帮助开发者深入了解大模型生态系统的发展动态，为技术选型和生态分析提供有力支持。
-                    </Typography>
+                        本平台依托 GitHub 丰富的开源数据，打造业界领先的 AI 大模型生态系统分析与可视化工具。我们通过多维度、全方位的数据挖掘与智能可视化，助力开发者、研究者和企业洞察大模型生态的最新趋势与核心竞争力。无论是技术选型、生态评估还是创新决策，这里都能为您提供权威、直观、深入的分析支持，助力把握 AI 时代的每一次机遇！
 
                     {/* 搜索框和下拉列表 */}
                     <Paper
