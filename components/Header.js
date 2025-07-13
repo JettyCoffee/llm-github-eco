@@ -153,44 +153,6 @@ const Header = ({ showSearch = false }) => {
                                 >
                                     项目总览
                                 </Link>
-                                <Link
-                                    href="/dashboard"
-                                    sx={{
-                                        textDecoration: 'none',
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        py: 1,
-                                        px: 2,
-                                        borderRadius: 1,
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }}
-                                >
-                                    项目分析
-                                </Link>
-                                <Link
-                                    href="/rankings"
-                                    sx={{
-                                        textDecoration: 'none',
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        py: 1,
-                                        px: 2,
-                                        borderRadius: 1,
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }}
-                                >
-                                    排行榜
-                                </Link>
                             </Box>
                         )}
                     </Box>
